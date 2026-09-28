@@ -167,6 +167,14 @@
   .chat-close{background:none; border:none; font-size:20px; color:var(--grey); cursor:pointer; padding:4px 8px;}
   .chat-foot{padding:6px 14px 10px; background:#fff; display:flex; gap:8px; flex-wrap:wrap;}
   .chat-foot .hint{margin-top:0; flex-basis:100%;}
+  .speak-btn{
+    border:1px solid var(--border); background:#fff; border-radius:50%;
+    width:28px; height:28px; font-size:14px; cursor:pointer; padding:0;
+    vertical-align:middle; margin-left:6px; line-height:1; flex:0 0 auto;
+  }
+  .speak-btn:active{background:var(--red-light);}
+  .sentence .txt{display:flex; align-items:flex-start; gap:4px;}
+  .sentence .txt .speak-btn{margin-top:1px;}
   .session-btn-row{margin:4px 0 14px; display:flex; flex-wrap:wrap; gap:8px; align-items:center;}
   .session-btn-row .hint{flex-basis:100%;}
   @media (max-width:520px){
@@ -401,6 +409,25 @@
     if(!el) return;
     el.className = "status";
     el.textContent = "";
+  }
+  function speakText(text){
+    if(!window.speechSynthesis || !window.SpeechSynthesisUtterance){
+      alert("這台裝置的瀏覽器不支援語音朗讀");
+      return;
+    }
+    window.speechSynthesis.cancel();
+    var u = new SpeechSynthesisUtterance(text);
+    u.lang = "en-US";
+    u.rate = 0.92;
+    var voices = window.speechSynthesis.getVoices();
+    var pick = null;
+    for(var i=0; i<voices.length; i++){
+      var v = voices[i];
+      if(v.lang === "en-US"){ pick = v; break; }
+      if(!pick && v.lang && v.lang.indexOf("en") === 0) pick = v;
+    }
+    if(pick) u.voice = pick;
+    window.speechSynthesis.speak(u);
   }
   function todayStr(){
     return new Date().toISOString().slice(0,10);
@@ -1166,7 +1193,8 @@
 
       html += '<div class="sec-title">今日句子 Key Sentences</div>';
       (d.sentences||[]).forEach(function(s, i){
-        html += '<div class="sentence"><div class="txt">' + (i+1) + '. ' + escapeHtml(s.text) + '</div>';
+        html += '<div class="sentence"><div class="txt"><span>' + (i+1) + '. ' + escapeHtml(s.text) + '</span>' +
+                '<button class="speak-btn" type="button" data-stype="sent" data-idx="' + i + '" title="唸出這句" aria-label="唸出這句">🔊</button></div>';
         (s.keywords||[]).forEach(function(k){
           html += '<div class="kw">* ' + escapeHtml(k.kw) + ' = ' + escapeHtml(k.def) + '</div>';
         });
@@ -1176,8 +1204,10 @@
       html += '<hr class="sep">';
       html += '<div class="sec-title">今日單字 Vocabulary</div>';
       html += '<div class="table-scroll"><table class="vocab">';
-      (d.vocab||[]).forEach(function(v){
-        html += '<tr><td class="word">' + escapeHtml(v.word) + '</td><td class="pos">' + escapeHtml(v.pos) + '</td><td>' + escapeHtml(v.def) + '</td></tr>';
+      (d.vocab||[]).forEach(function(v, vi){
+        html += '<tr><td class="word">' + escapeHtml(v.word) +
+                '<button class="speak-btn" type="button" data-stype="vocab" data-idx="' + vi + '" title="唸出這個單字" aria-label="唸出這個單字">🔊</button>' +
+                '</td><td class="pos">' + escapeHtml(v.pos) + '</td><td>' + escapeHtml(v.def) + '</td></tr>';
       });
       html += '</table></div>';
 
@@ -1188,6 +1218,18 @@
 
       panel.innerHTML = html;
       panelsEl.appendChild(panel);
+
+      // 🔊 read-aloud buttons for sentences & vocab
+      Array.prototype.forEach.call(panel.querySelectorAll(".speak-btn"), function(btn){
+        btn.addEventListener("click", function(){
+          var idx = Number(btn.getAttribute("data-idx"));
+          var stype = btn.getAttribute("data-stype");
+          var text = "";
+          if(stype === "sent" && d.sentences && d.sentences[idx]) text = d.sentences[idx].text;
+          if(stype === "vocab" && d.vocab && d.vocab[idx]) text = d.vocab[idx].word;
+          if(text) speakText(text);
+        });
+      });
 
       // live speaking-session button
       var sessRow = panel.querySelector(".session-btn-row");
