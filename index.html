@@ -167,7 +167,11 @@
   .chat-close{background:none; border:none; font-size:20px; color:var(--grey); cursor:pointer; padding:4px 8px;}
   .chat-foot{padding:6px 14px 10px; background:#fff; display:flex; gap:8px; flex-wrap:wrap;}
   .chat-foot .hint{margin-top:0; flex-basis:100%;}
-  .session-btn-row{margin:4px 0 14px;}
+  .session-btn-row{margin:4px 0 14px; display:flex; flex-wrap:wrap; gap:8px; align-items:center;}
+  .session-btn-row .hint{flex-basis:100%;}
+  @media (max-width:520px){
+    .session-btn-row .btn{width:100%; justify-content:center; margin-left:0 !important;}
+  }
 
   @media (max-width:520px){
     .chat-overlay.show{padding:0;}
@@ -1197,9 +1201,42 @@
         openSession(wn, d.day, d.topic_en || "");
       });
       sessRow.appendChild(sessBtn);
+
+      // copy full session prompt for practicing in ChatGPT (voice mode)
+      var gptBtn = document.createElement("button");
+      gptBtn.className = "btn secondary";
+      gptBtn.type = "button";
+      gptBtn.style.marginLeft = "8px";
+      gptBtn.textContent = "📋 複製 Prompt 到 ChatGPT 練";
+      gptBtn.addEventListener("click", function(){
+        var prompt = buildSessionSystemPrompt(wn, d.day) +
+          "\n\nBegin the session now: give me your friendly opener and Question 1.";
+        function done(){
+          gptBtn.textContent = "已複製！去 ChatGPT 貼上 →";
+          setTimeout(function(){ gptBtn.textContent = "📋 複製 Prompt 到 ChatGPT 練"; }, 2500);
+        }
+        if(navigator.clipboard && navigator.clipboard.writeText){
+          navigator.clipboard.writeText(prompt).then(done).catch(function(){
+            window.prompt("自動複製失敗，請手動全選複製：", prompt);
+          });
+        }else{
+          window.prompt("請手動全選複製：", prompt);
+        }
+      });
+      sessRow.appendChild(gptBtn);
+
+      var gptOpen = document.createElement("a");
+      gptOpen.className = "btn ghost small";
+      gptOpen.style.marginLeft = "8px";
+      gptOpen.href = "https://chatgpt.com/";
+      gptOpen.target = "_blank";
+      gptOpen.rel = "noopener";
+      gptOpen.textContent = "開啟 ChatGPT ↗";
+      sessRow.appendChild(gptOpen);
+
       var sessHint = document.createElement("div");
       sessHint.className = "hint";
-      sessHint.textContent = "AI 已讀過本週文章和今天 5 題，會逐題和你對談、即時給重點回饋，5 題結束後給潤飾版總結。";
+      sessHint.textContent = "兩種練法：① 直接在這裡和 AI 教練打字對談；② 按「複製 Prompt」→ 開啟 ChatGPT 貼上 → 切到語音模式，就能用說的照同一套流程練（逐題回饋＋最後總結）。";
       sessRow.appendChild(sessHint);
 
       // speaking blocks (built with DOM so we can attach handlers cleanly)
