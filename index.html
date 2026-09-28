@@ -1,0 +1,1075 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>英文讀書計畫 AI 助手</title>
+<style>
+  :root{
+    --red:#cc0000;
+    --red-light:#fbeaea;
+    --grey:#888;
+    --grey-light:#f4f4f2;
+    --border:#e2e0db;
+    --bg:#fdfcfa;
+    --text:#222;
+    --radius:12px;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; padding:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang TC","Microsoft JhengHei",sans-serif;
+    line-height:1.6;
+  }
+  .wrap{max-width:880px; margin:0 auto; padding:28px 20px 80px;}
+  header.app-header{margin-bottom:24px;}
+  header.app-header h1{font-size:24px; margin:0 0 4px; font-weight:800;}
+  header.app-header p{color:var(--grey); margin:0; font-size:14px;}
+  .card{
+    background:#fff; border:1px solid var(--border); border-radius:var(--radius);
+    padding:20px 22px; margin-bottom:20px;
+  }
+  .card h2{font-size:16px; margin:0 0 14px; font-weight:700; display:flex; align-items:center; gap:8px; flex-wrap:wrap;}
+  .card h2 .tag{font-size:11px; background:var(--red-light); color:var(--red); padding:2px 8px; border-radius:20px; font-weight:600;}
+  label{display:block; font-size:13px; font-weight:600; margin-bottom:6px; color:#444;}
+  input[type=text], input[type=password], input[type=date], textarea, select{
+    width:100%; border:1px solid var(--border); border-radius:8px; padding:9px 11px;
+    font-size:14px; font-family:inherit; background:#fff; color:var(--text);
+  }
+  textarea{resize:vertical;}
+  .row{display:flex; gap:14px; flex-wrap:wrap;}
+  .row > div{flex:1; min-width:160px;}
+  .field{margin-bottom:14px;}
+  .btn{
+    display:inline-flex; align-items:center; gap:6px;
+    background:var(--red); color:#fff; border:none; border-radius:8px;
+    padding:10px 18px; font-size:14px; font-weight:700; cursor:pointer;
+  }
+  .btn:hover{opacity:.92;}
+  .btn:disabled{background:#ccc; cursor:not-allowed;}
+  .btn.secondary{background:#fff; color:var(--red); border:1px solid var(--red);}
+  .btn.ghost{background:#fff; color:#555; border:1px solid var(--border); font-weight:600;}
+  .btn.small{padding:6px 12px; font-size:12.5px;}
+  .hint{font-size:12px; color:var(--grey); margin-top:6px;}
+  .apikey-row{display:flex; gap:8px;}
+  .apikey-row input{flex:1;}
+  .status{font-size:13px; margin-top:10px; padding:8px 10px; border-radius:8px; display:none;}
+  .status.show{display:block;}
+  .status.err{background:#fdeaea; color:#a30000;}
+  .status.ok{background:#eaf7ec; color:#146c2e;}
+  .status.loading{background:var(--grey-light); color:#555;}
+
+  .tabs{display:flex; gap:6px; margin-bottom:18px; flex-wrap:wrap;}
+  .tab-btn{
+    border:1px solid var(--border); background:#fff; border-radius:8px;
+    padding:8px 14px; font-size:13px; font-weight:700; cursor:pointer; color:#555;
+  }
+  .tab-btn.active{background:var(--red); color:#fff; border-color:var(--red);}
+
+  .day-panel{display:none;}
+  .day-panel.active{display:block;}
+  .day-meta{font-size:12px; color:var(--red); font-weight:700; margin-bottom:2px;}
+  .day-title-en{font-size:21px; font-weight:800; margin:2px 0 4px;}
+  .day-title-cn{font-size:13.5px; color:var(--grey); margin-bottom:14px;}
+  hr.sep{border:none; border-top:1px solid var(--border); margin:16px 0;}
+  .sec-title{font-size:14.5px; font-weight:700; margin:18px 0 10px; color:#333;}
+
+  .sentence{margin-bottom:12px;}
+  .sentence .txt{font-size:14px; font-weight:700;}
+  .sentence .kw{font-size:12.5px; color:var(--grey); font-style:italic; margin-left:16px; margin-top:2px;}
+
+  .table-scroll{width:100%; overflow-x:auto; -webkit-overflow-scrolling:touch;}
+  table.vocab{width:100%; min-width:420px; border-collapse:collapse; margin-top:4px;}
+  table.vocab td{border:1px solid var(--border); padding:8px 10px; font-size:13.5px; vertical-align:top;}
+  table.vocab td.word{font-weight:700; width:26%;}
+  table.vocab td.pos{color:var(--grey); font-style:italic; width:14%;}
+
+  .q-block{border:1px solid var(--border); border-radius:10px; padding:14px 16px; margin-bottom:14px; background:#fffdfb;}
+  .q-num{color:var(--red); font-weight:800; font-size:13px; margin-bottom:4px;}
+  .q-en{font-size:14px; font-weight:600; margin-bottom:2px;}
+  .q-cn{font-size:12.5px; color:var(--grey); margin-bottom:10px;}
+  .q-actions{display:flex; gap:8px; margin-bottom:8px; flex-wrap:wrap;}
+  .answer-box{width:100%; min-height:56px; margin-bottom:6px;}
+  .feedback{
+    background:var(--grey-light); border-radius:8px; padding:10px 12px; font-size:13px;
+    white-space:pre-wrap; margin-top:6px; display:none;
+  }
+  .feedback.show{display:block;}
+
+  .empty-state{color:var(--grey); font-size:14px; text-align:center; padding:30px 10px;}
+  footer.app-footer{color:var(--grey); font-size:12px; text-align:center; margin-top:30px;}
+  .toolbar{display:flex; gap:10px; flex-wrap:wrap; margin-top:6px;}
+  .spinner{display:inline-block; width:12px; height:12px; border:2px solid #fff; border-top-color:transparent; border-radius:50%; animation:spin .7s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+
+  .results-head{display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:14px;}
+  .results-head h2{margin-bottom:0;}
+  #weekSelector{max-width:170px; font-weight:700;}
+
+  /* ---- vocab review ---- */
+  .vocab-summary{display:flex; gap:18px; flex-wrap:wrap; margin-bottom:14px; font-size:13px; color:#444;}
+  .vocab-summary b{font-size:18px; color:var(--red); display:block; line-height:1.2;}
+  .vocab-controls{display:flex; gap:10px; flex-wrap:wrap; align-items:flex-end; margin-bottom:6px;}
+  .vocab-controls .field{margin-bottom:0; flex:1; min-width:160px;}
+  .flashcard-area{margin-top:18px; display:none;}
+  .flashcard-area.show{display:block;}
+  .flashcard-progress{font-size:12.5px; color:var(--grey); margin-bottom:10px; text-align:center;}
+  .flashcard{
+    border:1px solid var(--border); border-radius:14px; background:#fffdfb;
+    padding:32px 22px; text-align:center; min-height:150px;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    cursor:pointer;
+  }
+  .flashcard .fc-word{font-size:26px; font-weight:800; word-break:break-word;}
+  .flashcard .fc-pos{font-size:12.5px; color:var(--grey); font-style:italic; margin-top:4px;}
+  .flashcard .fc-def{font-size:15px; color:#333; margin-top:14px; display:none; line-height:1.5;}
+  .flashcard .fc-def.show{display:block;}
+  .flashcard .fc-hint{font-size:12px; color:var(--grey); margin-top:16px;}
+  .flashcard .fc-source{font-size:11.5px; color:var(--grey); margin-top:10px;}
+  .flashcard-actions{display:flex; gap:10px; margin-top:16px;}
+  .flashcard-actions .btn{flex:1; justify-content:center; padding:13px 10px; font-size:15px;}
+  .btn.remember{background:#146c2e;}
+  .btn.forget{background:#a30000;}
+  .flashcard-summary{text-align:center; padding:20px 10px;}
+  .flashcard-summary .big{font-size:16px; font-weight:700; margin-bottom:14px;}
+
+  @media (max-width:520px){
+    .wrap{padding:18px 14px 70px;}
+    header.app-header h1{font-size:20px;}
+    .card{padding:16px 15px;}
+    .apikey-row{flex-direction:column;}
+    .apikey-row input{width:100%;}
+    .apikey-row .btn{align-self:flex-start;}
+    .row > div{min-width:100%;}
+    .day-title-en{font-size:18px;}
+    .q-actions{flex-direction:column;}
+    .q-actions .btn{width:100%; justify-content:center;}
+    .flashcard{padding:26px 16px;}
+    .flashcard .fc-word{font-size:22px;}
+    .flashcard-actions{flex-direction:column;}
+    .toolbar{flex-direction:column;}
+    .toolbar .btn{width:100%; justify-content:center;}
+    .results-head{flex-direction:column; align-items:stretch;}
+    #weekSelector{max-width:100%;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="app-header">
+    <h1>英文讀書計畫 AI 助手</h1>
+    <p>電腦上產生本週教材 → 自動同步到這個網頁 → 手機隨時讀內容、練口說、複習單字。</p>
+  </header>
+
+  <!-- Cloud sync -->
+  <div class="card" id="syncCard">
+    <h2>雲端教材同步 <span class="tag">從 GitHub Pages 自動抓取</span></h2>
+    <div class="hint" id="syncInfo">尚未同步</div>
+    <div class="toolbar" style="margin-top:10px;">
+      <button class="btn secondary small" id="syncBtn" type="button">立即重新整理</button>
+    </div>
+    <div class="status" id="syncStatus"></div>
+  </div>
+
+  <!-- Settings (for optional in-browser AI features) -->
+  <div class="card">
+    <h2>AI 功能設定 <span class="tag">選用，只存在你的瀏覽器裡</span></h2>
+    <div class="row">
+      <div class="field" style="flex:2;">
+        <label for="apiKey">OpenAI API Key</label>
+        <div class="apikey-row">
+          <input type="password" id="apiKey" placeholder="sk-...">
+          <button class="btn ghost small" id="toggleKeyBtn" type="button">顯示</button>
+        </div>
+        <div class="hint">口說批改功能需要用到；Key 只會存在這台裝置的瀏覽器裡，直接呼叫 OpenAI，不會經過任何其他伺服器。</div>
+      </div>
+      <div class="field" style="flex:1;">
+        <label for="modelInput">模型名稱</label>
+        <input type="text" id="modelInput" value="gpt-4o-mini">
+        <div class="hint">可改成 gpt-4o 等其他模型</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Results -->
+  <div class="card" id="resultsCard" style="display:none;">
+    <div class="results-head">
+      <h2 id="resultsHeading">本週教材</h2>
+      <select id="weekSelector"></select>
+    </div>
+    <div class="tabs" id="dayTabs"></div>
+    <div id="dayPanels"></div>
+  </div>
+
+  <div class="card" id="emptyCard">
+    <div class="empty-state">還沒有教材 — 請確認網路連線並按「立即重新整理」，或在下方用 AI 直接產生一份。</div>
+  </div>
+
+  <!-- Advanced: generate directly in browser -->
+  <div class="card">
+    <h2>進階：直接用 AI 產生教材 <span class="tag">選用，不透過 Python 腳本</span></h2>
+    <div class="row">
+      <div class="field" style="max-width:140px;">
+        <label for="weekN">Week 編號</label>
+        <input type="text" id="weekN" placeholder="例如 13">
+      </div>
+      <div class="field" style="max-width:200px;">
+        <label for="weekStart">起始日期（週一）</label>
+        <input type="date" id="weekStart">
+      </div>
+    </div>
+    <div class="field">
+      <label for="articleInput">貼上文章（英文或中英對照皆可）</label>
+      <textarea id="articleInput" rows="10" placeholder="把 6 分鐘英語之類的中英對照文章整篇貼在這裡..."></textarea>
+    </div>
+    <button class="btn" id="generateBtn" type="button">AI 產生 5 天教材</button>
+    <div class="status" id="genStatus"></div>
+    <div class="hint">這個功能是備用方案：平常仍建議照原本方式在電腦上用 Python 腳本產生教材，並用發布腳本同步到雲端，才能自動累積到「單字複習」並讓所有裝置看到同一份內容。</div>
+  </div>
+
+  <!-- Vocabulary review -->
+  <div class="card" id="vocabCard">
+    <h2>單字複習 <span class="tag">自動累積每週單字，隨時自我測驗</span></h2>
+    <div class="vocab-summary" id="vocabSummary"></div>
+    <div class="vocab-controls">
+      <div class="field">
+        <label for="vocabFilter">複習範圍</label>
+        <select id="vocabFilter"></select>
+      </div>
+      <button class="btn" id="startReviewBtn" type="button">開始複習</button>
+    </div>
+    <div class="hint">卡片會先顯示單字，點一下（或按「顯示定義」）看解釋，再自己判斷記得還是不記得——不記得的字之後會更快再出現。</div>
+
+    <div class="flashcard-area" id="flashcardArea">
+      <div class="flashcard-progress" id="fcProgress"></div>
+      <div class="flashcard" id="flashcard">
+        <div class="fc-word" id="fcWord"></div>
+        <div class="fc-pos" id="fcPos"></div>
+        <div class="fc-def" id="fcDef"></div>
+        <div class="fc-hint" id="fcHint">點卡片顯示定義</div>
+        <div class="fc-source" id="fcSource"></div>
+      </div>
+      <div class="flashcard-actions" id="fcActions" style="display:none;">
+        <button class="btn forget" id="forgetBtn" type="button">不記得</button>
+        <button class="btn remember" id="rememberBtn" type="button">我記得</button>
+      </div>
+      <div class="flashcard-summary" id="fcSummary" style="display:none;"></div>
+    </div>
+  </div>
+
+  <div class="toolbar">
+    <button class="btn ghost small" id="exportBtn" type="button">匯出進度（JSON 備份）</button>
+    <button class="btn ghost small" id="importBtn" type="button">匯入進度／匯入週教材</button>
+    <input type="file" id="importFile" accept=".json" style="display:none;">
+    <button class="btn ghost small" id="resetBtn" type="button">清空本機快取</button>
+  </div>
+  <div class="hint" style="margin-top:-8px; margin-bottom:10px;">「匯入進度」也可以用來手動匯入 weekN_app_import.json（例如還沒 push 到 GitHub 前先預覽）；單字複習庫與作答紀錄都會保留。</div>
+
+  <footer class="app-footer">
+    每次 AI 呼叫都會使用你自己的 OpenAI Key 並產生少量費用；批改口說回答時，你的作答內容只會傳送給 OpenAI。這個網頁建議加到手機主畫面或加入書籤，方便隨時複習。
+  </footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  var STORAGE_KEY = "english_study_app_state_v2";
+  var state = {
+    apiKey: "",
+    model: "gpt-4o-mini",
+    currentWeek: "",
+    weeksData: {},   // weekN(string) -> {weekStart, articleEn, articleCn, days, answers}
+    vocabBank: [],   // [{id, word, pos, def, sources:[{weekN,day,topic_en}], addedAt, box, nextReviewAt, seen, correct, wrong, lastReviewedAt}]
+    lastSyncAt: null
+  };
+  var activeDay = 1;
+  var BOX_INTERVALS = [1, 2, 4, 7, 14, 30]; // days until next review, indexed by leitner box level
+  var reviewDeck = [];
+  var reviewIndex = 0;
+  var reviewStats = {correct: 0, wrong: 0};
+
+  // ---------- persistence ----------
+  function saveState(){
+    try{
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }catch(e){ /* storage unavailable, silently ignore - user can export manually */ }
+  }
+  function loadState(){
+    try{
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if(raw){
+        var parsed = JSON.parse(raw);
+        Object.assign(state, parsed);
+      }
+    }catch(e){ /* ignore */ }
+  }
+
+  // ---------- helpers ----------
+  function $(id){ return document.getElementById(id); }
+  function escapeHtml(s){
+    return String(s == null ? "" : s)
+      .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  }
+  function nextMonday(){
+    var d = new Date();
+    var day = d.getDay(); // 0=Sun
+    var diff = (8 - day) % 7;
+    if(diff === 0) diff = 0; // if today is Monday, default to today
+    d.setDate(d.getDate() + diff);
+    return d.toISOString().slice(0,10);
+  }
+  function fmtDate(dateStr, offsetDays){
+    var d = new Date(dateStr + "T00:00:00");
+    d.setDate(d.getDate() + offsetDays);
+    var months = ["Jan.","Feb.","Mar.","Apr.","May","Jun.","Jul.","Aug.","Sep.","Oct.","Nov.","Dec."];
+    return months[d.getMonth()] + " " + d.getDate() + ", " + d.getFullYear();
+  }
+  function setStatus(el, type, msg){
+    if(!el) return;
+    el.className = "status show " + type;
+    el.textContent = msg;
+  }
+  function clearStatus(el){
+    if(!el) return;
+    el.className = "status";
+    el.textContent = "";
+  }
+  function todayStr(){
+    return new Date().toISOString().slice(0,10);
+  }
+  function addDaysStr(baseStr, days){
+    var d = new Date(baseStr + "T00:00:00");
+    d.setDate(d.getDate() + days);
+    return d.toISOString().slice(0,10);
+  }
+
+  // ---------- multi-week data ----------
+  function ensureWeekData(wn){
+    wn = String(wn);
+    if(!state.weeksData[wn]){
+      state.weeksData[wn] = {weekStart:"", articleEn:"", articleCn:"", days:[], answers:{}};
+    }
+    if(!state.weeksData[wn].answers) state.weeksData[wn].answers = {};
+    return state.weeksData[wn];
+  }
+  function renderWeekSelector(){
+    var sel = $("weekSelector");
+    if(!sel) return;
+    var weeks = Object.keys(state.weeksData).sort(function(a,b){ return Number(b) - Number(a); });
+    sel.innerHTML = "";
+    weeks.forEach(function(wn){
+      var opt = document.createElement("option");
+      opt.value = wn;
+      opt.textContent = "Week " + wn;
+      sel.appendChild(opt);
+    });
+    if(state.currentWeek && weeks.indexOf(state.currentWeek) !== -1){
+      sel.value = state.currentWeek;
+    }else if(weeks.length){
+      state.currentWeek = weeks[0];
+      sel.value = weeks[0];
+    }
+  }
+  function switchWeek(wn){
+    state.currentWeek = String(wn);
+    activeDay = 1;
+    saveState();
+    renderResults();
+  }
+
+  // ---------- remote sync (GitHub Pages) ----------
+  function mergeRemoteWeek(weekJson){
+    if(!weekJson || weekJson.weekN == null) return;
+    var wn = String(weekJson.weekN);
+    var wd = ensureWeekData(wn);
+    wd.weekStart = weekJson.weekStart || wd.weekStart || "";
+    wd.articleEn = weekJson.articleEn || wd.articleEn || "";
+    wd.articleCn = weekJson.articleCn || wd.articleCn || "";
+    wd.days = weekJson.days || wd.days || [];
+    mergeVocabIntoBank(wn, weekJson.days || []);
+  }
+  function syncFromRemote(manual){
+    var statusEl = $("syncStatus");
+    if(manual) setStatus(statusEl, "loading", "正在從雲端重新整理教材...");
+    return fetch("data/manifest.json?t=" + Date.now(), {cache:"no-store"})
+      .then(function(res){
+        if(!res.ok) throw new Error("找不到 data/manifest.json（HTTP " + res.status + "）");
+        return res.json();
+      })
+      .then(function(manifest){
+        var weeks = (manifest.weeks || []).map(String);
+        var fetches = weeks.map(function(wn){
+          return fetch("data/week" + wn + ".json?t=" + Date.now(), {cache:"no-store"})
+            .then(function(r){
+              if(!r.ok) throw new Error("week" + wn + ".json 讀取失敗（HTTP " + r.status + "）");
+              return r.json();
+            })
+            .then(mergeRemoteWeek)
+            .catch(function(e){ console.warn(e); });
+        });
+        return Promise.all(fetches).then(function(){
+          if(manifest.latest && (!state.currentWeek || !state.weeksData[state.currentWeek])){
+            state.currentWeek = String(manifest.latest);
+          }
+          state.lastSyncAt = Date.now();
+          saveState();
+          renderWeekSelector();
+          renderResults();
+          renderVocabSummary();
+          if(manual) setStatus(statusEl, "ok", "已更新！目前共 " + weeks.length + " 週教材。");
+          else clearStatus(statusEl);
+        });
+      })
+      .catch(function(err){
+        if(manual){
+          setStatus(statusEl, "err", "同步失敗：" + err.message + "（可能尚未設定好 GitHub Pages，或目前離線 — 會先顯示本機快取的內容）");
+        }
+        console.warn("syncFromRemote failed", err);
+      })
+      .then(renderSyncInfo);
+  }
+  function renderSyncInfo(){
+    var el = $("syncInfo");
+    if(!el) return;
+    var weekCount = Object.keys(state.weeksData).length;
+    if(state.lastSyncAt){
+      var d = new Date(state.lastSyncAt);
+      var pad = function(n){ return n < 10 ? "0" + n : "" + n; };
+      var t = d.getFullYear() + "/" + pad(d.getMonth()+1) + "/" + pad(d.getDate()) + " " + pad(d.getHours()) + ":" + pad(d.getMinutes());
+      el.textContent = "最後同步：" + t + "　目前共有 " + weekCount + " 週教材（本機也有快取，離線也能看）";
+    }else{
+      el.textContent = weekCount
+        ? ("尚未連網同步過，目前顯示本機快取的 " + weekCount + " 週教材。")
+        : "尚未同步，且本機沒有快取教材 — 請確認網路連線，或稍後按「立即重新整理」再試一次。";
+    }
+  }
+
+  // ---------- vocab bank (spaced-repetition style review) ----------
+  function isDue(entry){
+    return !entry.nextReviewAt || entry.nextReviewAt <= todayStr();
+  }
+  function mergeVocabIntoBank(weekN, days){
+    if(!days || !days.length) return;
+    weekN = String(weekN || "").trim();
+    var today = todayStr();
+    days.forEach(function(d){
+      (d.vocab || []).forEach(function(v){
+        if(!v || !v.word) return;
+        var norm = v.word.trim().toLowerCase();
+        if(!norm) return;
+        var entry = null;
+        for(var i=0; i<state.vocabBank.length; i++){
+          if(state.vocabBank[i].id === norm){ entry = state.vocabBank[i]; break; }
+        }
+        if(!entry){
+          entry = {
+            id: norm, word: v.word.trim(), pos: v.pos || "", def: v.def || "",
+            sources: [], addedAt: today, box: 0, nextReviewAt: today,
+            seen: 0, correct: 0, wrong: 0, lastReviewedAt: null
+          };
+          state.vocabBank.push(entry);
+        }
+        var already = false;
+        for(var j=0; j<entry.sources.length; j++){
+          if(entry.sources[j].weekN === weekN && entry.sources[j].day === d.day){ already = true; break; }
+        }
+        if(!already){
+          entry.sources.push({weekN: weekN, day: d.day, topic_en: d.topic_en || ""});
+        }
+      });
+    });
+    saveState();
+  }
+  function computeVocabStats(){
+    var due = 0;
+    var weekCounts = {};
+    state.vocabBank.forEach(function(e){
+      if(isDue(e)) due++;
+      var seenWeeks = {};
+      (e.sources||[]).forEach(function(s){
+        if(!seenWeeks[s.weekN]){
+          seenWeeks[s.weekN] = true;
+          weekCounts[s.weekN] = (weekCounts[s.weekN] || 0) + 1;
+        }
+      });
+    });
+    return {total: state.vocabBank.length, due: due, weekCounts: weekCounts};
+  }
+  function renderVocabSummary(){
+    var stats = computeVocabStats();
+    var el = $("vocabSummary");
+    el.innerHTML =
+      '<div><b>' + stats.total + '</b>單字總數</div>' +
+      '<div><b>' + stats.due + '</b>今天待複習</div>';
+
+    var sel = $("vocabFilter");
+    var prevValue = sel.value;
+    sel.innerHTML = "";
+    var optAll = document.createElement("option");
+    optAll.value = "all";
+    optAll.textContent = "全部單字（" + stats.total + "）";
+    sel.appendChild(optAll);
+
+    var optDue = document.createElement("option");
+    optDue.value = "due";
+    optDue.textContent = "待複習（" + stats.due + "）";
+    sel.appendChild(optDue);
+
+    Object.keys(stats.weekCounts).sort(function(a,b){ return Number(a) - Number(b); }).forEach(function(wk){
+      var opt = document.createElement("option");
+      opt.value = "week:" + wk;
+      opt.textContent = "Week " + wk + "（" + stats.weekCounts[wk] + "）";
+      sel.appendChild(opt);
+    });
+
+    var found = false;
+    for(var i=0;i<sel.options.length;i++){ if(sel.options[i].value === prevValue){ found = true; break; } }
+    sel.value = (prevValue && found) ? prevValue : (stats.due > 0 ? "due" : "all");
+
+    $("startReviewBtn").disabled = stats.total === 0;
+  }
+
+  function startReview(){
+    var filter = $("vocabFilter").value;
+    var pool = state.vocabBank.slice();
+    if(filter === "due"){
+      pool = pool.filter(isDue);
+    }else if(filter && filter.indexOf("week:") === 0){
+      var wk = filter.slice(5);
+      pool = pool.filter(function(e){
+        return (e.sources||[]).some(function(s){ return s.weekN === wk; });
+      });
+    }
+    if(pool.length === 0){
+      alert("這個範圍目前沒有單字可以複習。");
+      return;
+    }
+    for(var i = pool.length - 1; i > 0; i--){
+      var j = Math.floor(Math.random() * (i+1));
+      var tmp = pool[i]; pool[i] = pool[j]; pool[j] = tmp;
+    }
+    reviewDeck = pool;
+    reviewIndex = 0;
+    reviewStats = {correct: 0, wrong: 0};
+    $("flashcardArea").className = "flashcard-area show";
+    $("fcSummary").style.display = "none";
+    $("flashcard").style.display = "flex";
+    renderFlashcard();
+  }
+
+  function renderFlashcard(){
+    if(reviewIndex >= reviewDeck.length){
+      endReview();
+      return;
+    }
+    var entry = reviewDeck[reviewIndex];
+    $("fcProgress").textContent = "第 " + (reviewIndex+1) + " / " + reviewDeck.length + " 張";
+    $("fcWord").textContent = entry.word;
+    $("fcPos").textContent = entry.pos || "";
+    var defEl = $("fcDef");
+    defEl.textContent = entry.def || "";
+    defEl.className = "fc-def";
+    $("fcHint").style.display = "block";
+    $("fcHint").textContent = "點卡片顯示定義";
+    var srcText = "";
+    if(entry.sources && entry.sources.length){
+      var lastSrc = entry.sources[entry.sources.length-1];
+      srcText = "Week " + lastSrc.weekN + " · Day " + lastSrc.day + (lastSrc.topic_en ? " · " + lastSrc.topic_en : "");
+    }
+    $("fcSource").textContent = srcText;
+    $("fcActions").style.display = "none";
+  }
+
+  function revealDef(){
+    if(reviewIndex >= reviewDeck.length) return;
+    $("fcDef").className = "fc-def show";
+    $("fcHint").style.display = "none";
+    $("fcActions").style.display = "flex";
+  }
+
+  function markCard(remembered){
+    if(reviewIndex >= reviewDeck.length) return;
+    var entry = reviewDeck[reviewIndex];
+    entry.seen = (entry.seen||0) + 1;
+    var today = todayStr();
+    if(remembered){
+      entry.correct = (entry.correct||0) + 1;
+      entry.box = Math.min((entry.box||0) + 1, BOX_INTERVALS.length - 1);
+      reviewStats.correct++;
+    }else{
+      entry.wrong = (entry.wrong||0) + 1;
+      entry.box = 0;
+      reviewStats.wrong++;
+    }
+    entry.nextReviewAt = addDaysStr(today, BOX_INTERVALS[entry.box]);
+    entry.lastReviewedAt = today;
+    saveState();
+    reviewIndex++;
+    renderFlashcard();
+    renderVocabSummary();
+  }
+
+  function endReview(){
+    $("flashcard").style.display = "none";
+    $("fcActions").style.display = "none";
+    $("fcProgress").textContent = "";
+    var el = $("fcSummary");
+    el.style.display = "block";
+    el.innerHTML =
+      '<div class="big">本次複習完成：我記得 ' + reviewStats.correct + ' 個，不記得 ' + reviewStats.wrong + ' 個</div>' +
+      '<button class="btn secondary small" id="reviewAgainBtn" type="button">再複習一次</button>';
+    $("reviewAgainBtn").addEventListener("click", startReview);
+  }
+
+  // ---------- OpenAI call ----------
+  function callOpenAI(systemPrompt, userPrompt, opts){
+    opts = opts || {};
+    var apiKey = state.apiKey;
+    if(!apiKey){
+      return Promise.reject(new Error("請先在上方設定欄填入 OpenAI API Key"));
+    }
+    var body = {
+      model: state.model || "gpt-4o-mini",
+      messages: [
+        {role:"system", content: systemPrompt},
+        {role:"user", content: userPrompt}
+      ],
+      temperature: opts.temperature != null ? opts.temperature : 0.6
+    };
+    if(opts.json){
+      body.response_format = {type:"json_object"};
+    }
+    return fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + apiKey
+      },
+      body: JSON.stringify(body)
+    }).then(function(res){
+      if(!res.ok){
+        return res.json().catch(function(){ return {}; }).then(function(errBody){
+          var msg = (errBody && errBody.error && errBody.error.message) ? errBody.error.message : ("HTTP " + res.status);
+          throw new Error(msg);
+        });
+      }
+      return res.json();
+    }).then(function(data){
+      var content = data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
+      if(!content) throw new Error("AI 沒有回傳內容，請再試一次");
+      return content;
+    });
+  }
+
+  // ---------- generate 5-day plan (advanced / optional, in-browser) ----------
+  var SPLIT_SYSTEM_PROMPT = [
+    "You are an expert English curriculum designer creating a 5-day study plan for a Traditional-Chinese-speaking",
+    "learner (self-assessed B1, intentionally challenged with C1-level material) based on a real news/interview",
+    "article the user pastes in (it may be English-only or bilingual).",
+    "",
+    "Read the whole article, then split its content into 5 day-by-day themes that each stand alone but together",
+    "cover the entire article with no repeats and no gaps.",
+    "",
+    "For EACH day produce:",
+    "- topic_en / topic_cn: a short subtitle in \"Phrase — Phrase\" style. topic_cn must be Traditional Chinese.",
+    "- sentences: exactly 6 sentences copied VERBATIM from the article (never paraphrase or invent). Each sentence",
+    "  gets 2-3 keyword entries with a short, clear English definition.",
+    "- vocab: exactly 5 vocabulary items (word, part of speech as n./v./adj./adv./prep./phrase, short English definition).",
+    "- speaking: exactly 5 open-ended speaking practice questions in English, each with a Traditional Chinese",
+    "  translation. Avoid yes/no questions. On Day 5 only, question 5 must be a reflective question asking what the",
+    "  learner's biggest takeaway is after studying the whole article all week.",
+    "",
+    "Keep difficulty at C1 level (do not simplify the original sentences), but keyword/vocab definitions should be",
+    "clear enough for a B1-B2 reader to understand.",
+    "",
+    "Output ONLY a single valid JSON object (no markdown fences, no commentary) with this exact shape:",
+    "{",
+    "  \"article_en\": string,",
+    "  \"article_cn\": string,",
+    "  \"days\": [",
+    "    {",
+    "      \"day\": 1,",
+    "      \"topic_en\": string,",
+    "      \"topic_cn\": string,",
+    "      \"sentences\": [ { \"text\": string, \"keywords\": [ { \"kw\": string, \"def\": string } ] } ],",
+    "      \"vocab\": [ { \"word\": string, \"pos\": string, \"def\": string } ],",
+    "      \"speaking\": [ { \"en\": string, \"cn\": string } ]",
+    "    }",
+    "  ]",
+    "}",
+    "There must be exactly 5 objects in \"days\", each with exactly 6 sentences, 5 vocab items, and 5 speaking questions."
+  ].join("\n");
+
+  function generatePlan(){
+    var statusEl = $("genStatus");
+    var article = $("articleInput").value.trim();
+    var weekN = $("weekN").value.trim();
+    var weekStart = $("weekStart").value;
+
+    if(!article){
+      setStatus(statusEl, "err", "請先貼上文章內容");
+      return;
+    }
+    if(!weekN){
+      setStatus(statusEl, "err", "請填寫 Week 編號");
+      return;
+    }
+    if(!weekStart){
+      setStatus(statusEl, "err", "請選擇起始日期（週一）");
+      return;
+    }
+
+    state.apiKey = $("apiKey").value.trim();
+    state.model = $("modelInput").value.trim() || "gpt-4o-mini";
+
+    var btn = $("generateBtn");
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> AI 產生中...';
+    setStatus(statusEl, "loading", "AI 正在閱讀文章並拆成 5 天教材，可能需要 30 秒到 1 分鐘...");
+
+    callOpenAI(SPLIT_SYSTEM_PROMPT, article, {json:true, temperature:0.6})
+      .then(function(content){
+        var parsed;
+        try{
+          parsed = JSON.parse(content);
+        }catch(e){
+          throw new Error("AI 回傳的內容不是有效 JSON，請再按一次產生，或換一個模型試試");
+        }
+        if(!parsed.days || parsed.days.length !== 5){
+          throw new Error("AI 回傳的天數不是 5 天，請再試一次");
+        }
+        var wn = String(weekN);
+        var wd = ensureWeekData(wn);
+        wd.weekStart = weekStart;
+        wd.articleEn = parsed.article_en || "";
+        wd.articleCn = parsed.article_cn || "";
+        wd.days = parsed.days;
+        wd.answers = {};
+        state.currentWeek = wn;
+        activeDay = 1;
+        mergeVocabIntoBank(wn, parsed.days);
+        saveState();
+        renderWeekSelector();
+        renderResults();
+        renderVocabSummary();
+        setStatus(statusEl, "ok", "教材產生完成！請往下查看每日內容，單字也已加入下方「單字複習」。");
+      })
+      .catch(function(err){
+        setStatus(statusEl, "err", "發生錯誤：" + err.message);
+      })
+      .finally(function(){
+        btn.disabled = false;
+        btn.textContent = "AI 產生 5 天教材";
+      });
+  }
+
+  // ---------- correct a speaking answer ----------
+  var CORRECT_SYSTEM_PROMPT = [
+    "You are a warm, encouraging spoken-English coach for a Traditional-Chinese-speaking B1 learner who is",
+    "intentionally practicing with C1-level material. Given a speaking practice question and the learner's",
+    "attempted answer (typed, possibly containing grammar mistakes or Chinglish phrasing), respond with plain text",
+    "(no markdown headers, no asterisks) containing exactly three short parts, each on its own paragraph:",
+    "1) An improved, natural, native-sounding English version of their answer that keeps their original meaning.",
+    "2) 2-4 bullet points in Traditional Chinese (each starting with '- ') explaining the key corrections (grammar,",
+    "   word choice, more natural phrasing).",
+    "3) One short, encouraging comment in Traditional Chinese.",
+    "Keep the whole response concise."
+  ].join("\n");
+
+  function correctAnswer(wn, dayIdx, qIdx, question, answer, feedbackEl, btn){
+    if(!answer.trim()){
+      feedbackEl.className = "feedback show";
+      feedbackEl.textContent = "請先輸入你的回答，再按「AI 批改」。";
+      return;
+    }
+    btn.disabled = true;
+    var oldText = btn.textContent;
+    btn.innerHTML = '<span class="spinner"></span> 批改中...';
+    feedbackEl.className = "feedback show";
+    feedbackEl.textContent = "AI 批改中，請稍候...";
+
+    var userPrompt = "Question: " + question + "\n\nLearner's answer: " + answer;
+    callOpenAI(CORRECT_SYSTEM_PROMPT, userPrompt, {temperature:0.5})
+      .then(function(content){
+        feedbackEl.textContent = content;
+        var wd = ensureWeekData(wn);
+        var key = dayIdx + "-" + qIdx;
+        wd.answers[key] = {answer: answer, feedback: content};
+        saveState();
+      })
+      .catch(function(err){
+        feedbackEl.textContent = "發生錯誤：" + err.message;
+      })
+      .finally(function(){
+        btn.disabled = false;
+        btn.textContent = oldText;
+      });
+  }
+
+  // ---------- render ----------
+  function renderResults(){
+    var wn = state.currentWeek;
+    var wd = wn ? state.weeksData[wn] : null;
+    if(!wd || !wd.days || wd.days.length === 0){
+      $("resultsCard").style.display = "none";
+      $("emptyCard").style.display = "block";
+      return;
+    }
+    $("resultsCard").style.display = "block";
+    $("emptyCard").style.display = "none";
+    $("resultsHeading").textContent = "Week " + wn + " 教材";
+    if(!wd.answers) wd.answers = {};
+
+    // tabs
+    var tabsEl = $("dayTabs");
+    tabsEl.innerHTML = "";
+    wd.days.forEach(function(d){
+      var b = document.createElement("button");
+      b.className = "tab-btn" + (d.day === activeDay ? " active" : "");
+      b.textContent = "Day " + d.day;
+      b.type = "button";
+      b.addEventListener("click", function(){
+        activeDay = d.day;
+        renderResults();
+      });
+      tabsEl.appendChild(b);
+    });
+
+    // panels
+    var panelsEl = $("dayPanels");
+    panelsEl.innerHTML = "";
+    wd.days.forEach(function(d){
+      var panel = document.createElement("div");
+      panel.className = "day-panel" + (d.day === activeDay ? " active" : "");
+
+      var dateStr = wd.weekStart ? fmtDate(wd.weekStart, d.day - 1) : "";
+      var html = "";
+      html += '<div class="day-meta">Day ' + d.day + ' of 5 · Week ' + escapeHtml(wn) + (dateStr ? " · " + dateStr : "") + '</div>';
+      html += '<div class="day-title-en">' + escapeHtml(d.topic_en) + '</div>';
+      html += '<div class="day-title-cn">' + escapeHtml(d.topic_cn) + '</div>';
+      html += '<hr class="sep">';
+
+      html += '<div class="sec-title">今日句子 Key Sentences</div>';
+      (d.sentences||[]).forEach(function(s, i){
+        html += '<div class="sentence"><div class="txt">' + (i+1) + '. ' + escapeHtml(s.text) + '</div>';
+        (s.keywords||[]).forEach(function(k){
+          html += '<div class="kw">* ' + escapeHtml(k.kw) + ' = ' + escapeHtml(k.def) + '</div>';
+        });
+        html += '</div>';
+      });
+
+      html += '<hr class="sep">';
+      html += '<div class="sec-title">今日單字 Vocabulary</div>';
+      html += '<div class="table-scroll"><table class="vocab">';
+      (d.vocab||[]).forEach(function(v){
+        html += '<tr><td class="word">' + escapeHtml(v.word) + '</td><td class="pos">' + escapeHtml(v.pos) + '</td><td>' + escapeHtml(v.def) + '</td></tr>';
+      });
+      html += '</table></div>';
+
+      html += '<hr class="sep">';
+      html += '<div class="sec-title">口說練習 Speaking Practice</div>';
+      html += '<div class="speaking-list" data-day="' + d.day + '"></div>';
+
+      panel.innerHTML = html;
+      panelsEl.appendChild(panel);
+
+      // speaking blocks (built with DOM so we can attach handlers cleanly)
+      var listEl = panel.querySelector(".speaking-list");
+      (d.speaking||[]).forEach(function(q, qIdx){
+        var key = d.day + "-" + qIdx;
+        var saved = wd.answers[key];
+
+        var block = document.createElement("div");
+        block.className = "q-block";
+
+        var num = document.createElement("div");
+        num.className = "q-num";
+        num.textContent = "Q" + (qIdx+1) + ".";
+        block.appendChild(num);
+
+        var qEn = document.createElement("div");
+        qEn.className = "q-en";
+        qEn.textContent = q.en;
+        block.appendChild(qEn);
+
+        var qCn = document.createElement("div");
+        qCn.className = "q-cn";
+        qCn.textContent = q.cn;
+        block.appendChild(qCn);
+
+        var answerBox = document.createElement("textarea");
+        answerBox.className = "answer-box";
+        answerBox.placeholder = "打字寫下你的回答（也可以是口說逐字稿）...";
+        answerBox.value = saved ? saved.answer : "";
+        block.appendChild(answerBox);
+
+        var actions = document.createElement("div");
+        actions.className = "q-actions";
+
+        var copyBtn = document.createElement("button");
+        copyBtn.className = "btn secondary small";
+        copyBtn.type = "button";
+        copyBtn.textContent = "複製提問";
+        copyBtn.addEventListener("click", function(){
+          var text = q.en + "\n" + q.cn;
+          navigator.clipboard && navigator.clipboard.writeText(text).then(function(){
+            copyBtn.textContent = "已複製！";
+            setTimeout(function(){ copyBtn.textContent = "複製提問"; }, 1500);
+          }).catch(function(){});
+        });
+        actions.appendChild(copyBtn);
+
+        var correctBtn = document.createElement("button");
+        correctBtn.className = "btn small";
+        correctBtn.type = "button";
+        correctBtn.textContent = "AI 批改";
+        actions.appendChild(correctBtn);
+
+        block.appendChild(actions);
+
+        var feedbackEl = document.createElement("div");
+        feedbackEl.className = "feedback" + (saved && saved.feedback ? " show" : "");
+        if(saved && saved.feedback) feedbackEl.textContent = saved.feedback;
+        block.appendChild(feedbackEl);
+
+        correctBtn.addEventListener("click", function(){
+          correctAnswer(wn, d.day, qIdx, q.en, answerBox.value, feedbackEl, correctBtn);
+        });
+        answerBox.addEventListener("blur", function(){
+          var wd2 = ensureWeekData(wn);
+          var k = d.day + "-" + qIdx;
+          var existing = wd2.answers[k] || {};
+          existing.answer = answerBox.value;
+          wd2.answers[k] = existing;
+          saveState();
+        });
+
+        listEl.appendChild(block);
+      });
+    });
+  }
+
+  // ---------- export / import ----------
+  function exportState(){
+    var blob = new Blob([JSON.stringify(state, null, 2)], {type:"application/json"});
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    var name = "english_study_backup_" + (new Date().toISOString().slice(0,10)) + ".json";
+    a.href = url; a.download = name;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+  function importState(file){
+    var reader = new FileReader();
+    reader.onload = function(){
+      try{
+        var parsed = JSON.parse(reader.result);
+        if(!state.vocabBank) state.vocabBank = [];
+        if(!state.weeksData) state.weeksData = {};
+        if(parsed.weeksData){
+          // full v2 backup
+          Object.assign(state, parsed);
+          if(!state.vocabBank) state.vocabBank = [];
+          if(!state.weeksData) state.weeksData = {};
+        }else if(parsed.days){
+          // single-week weekN_app_import.json (from export/publish script)
+          var wn = String(parsed.weekN || state.currentWeek || "");
+          if(!wn){
+            alert("匯入失敗：檔案裡沒有 weekN，請確認檔案內容");
+            return;
+          }
+          var wd = ensureWeekData(wn);
+          wd.weekStart = parsed.weekStart || wd.weekStart;
+          wd.articleEn = parsed.articleEn || wd.articleEn;
+          wd.articleCn = parsed.articleCn || wd.articleCn;
+          wd.days = parsed.days;
+          state.currentWeek = wn;
+          mergeVocabIntoBank(wn, parsed.days);
+        }else{
+          alert("匯入失敗：無法辨識的檔案格式");
+          return;
+        }
+        activeDay = 1;
+        saveState();
+        syncFormFromState();
+        renderWeekSelector();
+        renderResults();
+        renderVocabSummary();
+      }catch(e){
+        alert("匯入失敗：檔案格式不正確");
+      }
+    };
+    reader.readAsText(file);
+  }
+
+  function syncFormFromState(){
+    $("apiKey").value = state.apiKey || "";
+    $("modelInput").value = state.model || "gpt-4o-mini";
+    if(!$("weekStart").value) $("weekStart").value = nextMonday();
+  }
+
+  // ---------- wire up ----------
+  document.addEventListener("DOMContentLoaded", function(){
+    loadState();
+    if(!state.vocabBank) state.vocabBank = [];
+    if(!state.weeksData) state.weeksData = {};
+    syncFormFromState();
+    renderWeekSelector();
+    renderResults();
+    renderVocabSummary();
+    renderSyncInfo();
+    syncFromRemote(false);
+
+    $("toggleKeyBtn").addEventListener("click", function(){
+      var input = $("apiKey");
+      if(input.type === "password"){
+        input.type = "text";
+        this.textContent = "隱藏";
+      }else{
+        input.type = "password";
+        this.textContent = "顯示";
+      }
+    });
+
+    $("apiKey").addEventListener("change", function(){ state.apiKey = this.value.trim(); saveState(); });
+    $("modelInput").addEventListener("change", function(){ state.model = this.value.trim(); saveState(); });
+
+    $("generateBtn").addEventListener("click", generatePlan);
+
+    $("weekSelector").addEventListener("change", function(){ switchWeek(this.value); });
+    $("syncBtn").addEventListener("click", function(){ syncFromRemote(true); });
+
+    $("exportBtn").addEventListener("click", exportState);
+    $("importBtn").addEventListener("click", function(){ $("importFile").click(); });
+    $("importFile").addEventListener("change", function(){
+      if(this.files && this.files[0]) importState(this.files[0]);
+      this.value = "";
+    });
+    $("resetBtn").addEventListener("click", function(){
+      if(!confirm("確定要清空本機快取的教材與作答紀錄嗎？（API Key、單字複習庫不會被清除；重新整理後會再從雲端同步）")) return;
+      var keepKey = state.apiKey, keepModel = state.model, keepVocabBank = state.vocabBank;
+      state = {apiKey: keepKey, model: keepModel, currentWeek:"", weeksData:{}, vocabBank: keepVocabBank || [], lastSyncAt:null};
+      saveState();
+      syncFormFromState();
+      $("articleInput").value = "";
+      clearStatus($("genStatus"));
+      renderWeekSelector();
+      renderResults();
+      renderVocabSummary();
+      renderSyncInfo();
+      syncFromRemote(false);
+    });
+
+    $("startReviewBtn").addEventListener("click", startReview);
+    $("flashcard").addEventListener("click", revealDef);
+    $("rememberBtn").addEventListener("click", function(){ markCard(true); });
+    $("forgetBtn").addEventListener("click", function(){ markCard(false); });
+  });
+})();
+</script>
+</body>
+</html>

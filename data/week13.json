@@ -1,0 +1,614 @@
+{
+  "weekN": "13",
+  "weekStart": "2026-09-28",
+  "articleEn": "Why More and More People Are Feeling Exhausted These Days",
+  "articleCn": "為什麼如今越來越多人感到精疲力竭",
+  "days": [
+    {
+      "day": 1,
+      "topic_en": "A New Wave of Exhaustion — What the CDC's Fatigue Report Found",
+      "topic_cn": "疲憊新浪潮 — CDC 疲勞報告揭露了什麼",
+      "sentences": [
+        {
+          "text": "From work stress to everyday responsibilities, we can all relate to feeling more than a little burned out.",
+          "keywords": [
+            {
+              "kw": "everyday responsibilities",
+              "def": "the tasks and duties you must handle daily"
+            },
+            {
+              "kw": "burned out",
+              "def": "extremely exhausted from mental or physical strain"
+            }
+          ]
+        },
+        {
+          "text": "A new report from the CDC is shedding new light on the fatigue more and more people say they are experiencing.",
+          "keywords": [
+            {
+              "kw": "shedding new light on",
+              "def": "revealing fresh information that helps explain something"
+            },
+            {
+              "kw": "CDC",
+              "def": "the U.S. Centers for Disease Control and Prevention"
+            }
+          ]
+        },
+        {
+          "text": "A nationwide survey found that nearly three in four adults said they felt very tired or exhausted on multiple days in the past three months.",
+          "keywords": [
+            {
+              "kw": "nationwide survey",
+              "def": "a study conducted across an entire country"
+            },
+            {
+              "kw": "on multiple days",
+              "def": "on more than one occasion"
+            }
+          ]
+        },
+        {
+          "text": "That may seem pretty standard, but it's the first time the CDC's National Center for Health Statistics has studied fatigue like this.",
+          "keywords": [
+            {
+              "kw": "pretty standard",
+              "def": "fairly ordinary or expected"
+            },
+            {
+              "kw": "National Center for Health Statistics",
+              "def": "the CDC division that collects U.S. health data"
+            }
+          ]
+        },
+        {
+          "text": "47,000 adults above 18 years old were asked about their health and daily lives for this study.",
+          "keywords": [
+            {
+              "kw": "daily lives",
+              "def": "everyday routines and activities"
+            }
+          ]
+        },
+        {
+          "text": "Well, the numbers are actually quite high.",
+          "keywords": [
+            {
+              "kw": "quite high",
+              "def": "notably elevated or greater than expected"
+            }
+          ]
+        }
+      ],
+      "vocab": [
+        {
+          "word": "burned out",
+          "pos": "adj.",
+          "def": "extremely tired and drained from overwork or stress"
+        },
+        {
+          "word": "shed light on",
+          "pos": "phrase",
+          "def": "to reveal new information that helps explain something"
+        },
+        {
+          "word": "nationwide",
+          "pos": "adj.",
+          "def": "covering or affecting an entire country"
+        },
+        {
+          "word": "exhausted",
+          "pos": "adj.",
+          "def": "extremely tired; lacking energy"
+        },
+        {
+          "word": "standard",
+          "pos": "adj.",
+          "def": "usual, typical, or expected"
+        }
+      ],
+      "speaking": [
+        {
+          "en": "Have you ever felt \"burned out\" from work or daily responsibilities? What caused it?",
+          "cn": "你曾因工作或日常責任感到「精疲力竭」嗎？原因是什麼？"
+        },
+        {
+          "en": "Does it surprise you that nearly three in four adults feel exhausted often?",
+          "cn": "「近四分之三的成年人經常感到疲憊」這個結果讓你意外嗎？"
+        },
+        {
+          "en": "What part of your daily life makes you feel the most exhausted?",
+          "cn": "你日常生活中哪個部分最讓你感到疲憊？"
+        },
+        {
+          "en": "If you were surveyed about your fatigue level, how would you rate it — low, medium, or high?",
+          "cn": "如果有人調查你的疲勞程度，你會評為低、中還是高？"
+        },
+        {
+          "en": "Why do you think health agencies are only now studying fatigue this closely?",
+          "cn": "你認為為什麼衛生機構到現在才這麼仔細研究疲勞問題？"
+        }
+      ]
+    },
+    {
+      "day": 2,
+      "topic_en": "Fatigue vs. Sleepiness — Learning the Real Difference",
+      "topic_cn": "疲勞 vs 嗜睡 — 認清兩者的真正差別",
+      "sentences": [
+        {
+          "text": "It is a bit surprising that that many of us are having difficulty, but I think we have to really differentiate what do they mean by fatigue.",
+          "keywords": [
+            {
+              "kw": "having difficulty",
+              "def": "struggling with something"
+            },
+            {
+              "kw": "differentiate",
+              "def": "to recognize or identify the difference between things"
+            }
+          ]
+        },
+        {
+          "text": "So, if you are trying to describe sleepiness, that's a bit different.",
+          "keywords": [
+            {
+              "kw": "a bit different",
+              "def": "somewhat distinct or not quite the same"
+            }
+          ]
+        },
+        {
+          "text": "That's somebody who, if they're tired and not getting the amount of sleep they need, are going to feel like they need to sleep.",
+          "keywords": [
+            {
+              "kw": "the amount of sleep they need",
+              "def": "the required hours of rest for the body"
+            }
+          ]
+        },
+        {
+          "text": "And fatigue is a little different. That's time on task.",
+          "keywords": [
+            {
+              "kw": "time on task",
+              "def": "the length of time spent doing an activity, which can cause tiredness"
+            }
+          ]
+        },
+        {
+          "text": "So, you can have mental or physical fatigue after doing something too much in a day.",
+          "keywords": [
+            {
+              "kw": "mental or physical fatigue",
+              "def": "tiredness of the mind or of the body"
+            }
+          ]
+        },
+        {
+          "text": "And how you can tell the difference is if you can sit quietly, do you feel like falling asleep? Well, that's sleepiness as opposed to fatigue.",
+          "keywords": [
+            {
+              "kw": "sit quietly",
+              "def": "to remain still and calm"
+            },
+            {
+              "kw": "as opposed to",
+              "def": "in contrast with; rather than"
+            }
+          ]
+        }
+      ],
+      "vocab": [
+        {
+          "word": "differentiate",
+          "pos": "v.",
+          "def": "to recognize or identify the difference between things"
+        },
+        {
+          "word": "sleepiness",
+          "pos": "n.",
+          "def": "the feeling of needing or wanting to sleep"
+        },
+        {
+          "word": "fatigue",
+          "pos": "n.",
+          "def": "extreme tiredness from mental or physical effort"
+        },
+        {
+          "word": "time on task",
+          "pos": "phrase",
+          "def": "the duration spent doing a particular activity"
+        },
+        {
+          "word": "as opposed to",
+          "pos": "phrase",
+          "def": "in contrast to; rather than"
+        }
+      ],
+      "speaking": [
+        {
+          "en": "Before reading this, did you know fatigue and sleepiness are different things?",
+          "cn": "在讀這篇文章之前，你知道「疲勞」和「嗜睡」是不同的嗎？"
+        },
+        {
+          "en": "Try Dr. Ash's test — if you sit quietly right now, do you feel sleepy?",
+          "cn": "試試 Ash 醫生的測試 — 如果你現在安靜坐著，會想睡覺嗎？"
+        },
+        {
+          "en": "What kind of \"task\" usually gives you mental fatigue?",
+          "cn": "什麼樣的「任務」通常會讓你精神疲勞？"
+        },
+        {
+          "en": "Do you get enough sleep each night? How many hours do you usually get?",
+          "cn": "你每晚睡得夠嗎？通常睡幾小時？"
+        },
+        {
+          "en": "Which do you experience more often — sleepiness or fatigue?",
+          "cn": "你比較常經歷「嗜睡」還是「疲勞」？"
+        }
+      ]
+    },
+    {
+      "day": 3,
+      "topic_en": "Why We're More Tired Despite AI — Technology and the Hyperaroused Brain",
+      "topic_cn": "即使有 AI 為何更累 — 科技與過度警覺的大腦",
+      "sentences": [
+        {
+          "text": "Why do you think we are suddenly more and more tired and exhausted when we live in a world where there's all of this stuff like AI that should make our lives easier?",
+          "keywords": [
+            {
+              "kw": "suddenly more and more",
+              "def": "increasingly, in a way that feels new"
+            },
+            {
+              "kw": "make our lives easier",
+              "def": "to reduce effort or difficulty in daily life"
+            }
+          ]
+        },
+        {
+          "text": "Well, I think it's a very very interesting finding because, you know what modern cognitive neuroscience is telling us is several things.",
+          "keywords": [
+            {
+              "kw": "cognitive neuroscience",
+              "def": "the scientific study of the brain and mental processes"
+            }
+          ]
+        },
+        {
+          "text": "Look for mimics. Are you anemic? You know, there's other things like sleep apnea, cardiac disease, depression, that could all make you feel fatigued.",
+          "keywords": [
+            {
+              "kw": "mimics",
+              "def": "things that look similar but actually have a different cause"
+            },
+            {
+              "kw": "anemic",
+              "def": "having lower than normal red blood cells, which causes tiredness"
+            },
+            {
+              "kw": "sleep apnea",
+              "def": "a disorder causing repeated breathing interruptions during sleep"
+            }
+          ]
+        },
+        {
+          "text": "But interestingly, the study showed that women were more having more problems, and those in the age range from 18 to 34 years old.",
+          "keywords": [
+            {
+              "kw": "age range",
+              "def": "a span of ages grouped together"
+            }
+          ]
+        },
+        {
+          "text": "Well, women tend to sometimes have more difficulty with depression, but the 18-to-30-year-old group is very interesting, because what modern neuroscience is telling us is we're spending way too much time engaged with technology.",
+          "keywords": [
+            {
+              "kw": "spending way too much time",
+              "def": "using something excessively"
+            },
+            {
+              "kw": "engaged with",
+              "def": "actively involved with"
+            }
+          ]
+        },
+        {
+          "text": "That is keeping the brain engaged and hyperaroused, and that it's actually overtasked.",
+          "keywords": [
+            {
+              "kw": "hyperaroused",
+              "def": "in a state of heightened alertness or stimulation"
+            },
+            {
+              "kw": "overtasked",
+              "def": "given more demands or stimulation than it can handle"
+            }
+          ]
+        }
+      ],
+      "vocab": [
+        {
+          "word": "cognitive neuroscience",
+          "pos": "n.",
+          "def": "the scientific study of how the brain supports mental processes"
+        },
+        {
+          "word": "anemic",
+          "pos": "adj.",
+          "def": "having lower than normal red blood cells, causing tiredness"
+        },
+        {
+          "word": "sleep apnea",
+          "pos": "n.",
+          "def": "a disorder involving repeated breathing interruptions during sleep"
+        },
+        {
+          "word": "hyperaroused",
+          "pos": "adj.",
+          "def": "in a state of excessive alertness or stimulation"
+        },
+        {
+          "word": "overtasked",
+          "pos": "adj.",
+          "def": "given more demands than can be handled"
+        }
+      ],
+      "speaking": [
+        {
+          "en": "Why do you think people feel more tired even though technology like AI is supposed to make life easier?",
+          "cn": "你認為為什麼科技（如 AI）應該讓生活更輕鬆，人們卻感覺更累？"
+        },
+        {
+          "en": "Do you think you spend \"way too much time\" on your phone?",
+          "cn": "你覺得自己花「太多時間」在手機上嗎？"
+        },
+        {
+          "en": "Were you surprised that women and people aged 18-34 report more fatigue?",
+          "cn": "女性和 18-34 歲族群疲勞感較高，這個結果讓你意外嗎？"
+        },
+        {
+          "en": "What does it mean for your brain to feel \"hyperaroused\"? Have you felt this way?",
+          "cn": "「大腦過度警覺」是什麼感覺？你有過這種經驗嗎？"
+        },
+        {
+          "en": "What \"mimics\" of fatigue (like poor sleep or health issues) might be affecting you?",
+          "cn": "有哪些「疲勞的偽裝」（如睡眠不足或健康問題）可能正影響著你？"
+        }
+      ]
+    },
+    {
+      "day": 4,
+      "topic_en": "The Hidden Risks — Losing Your Sense of Purpose",
+      "topic_cn": "隱藏的風險 — 失去人生方向感",
+      "sentences": [
+        {
+          "text": "What are the biggest risks that may come from being exhausted too frequently?",
+          "keywords": [
+            {
+              "kw": "too frequently",
+              "def": "too often"
+            }
+          ]
+        },
+        {
+          "text": "Well, if you're constantly using the phone, it keeps the left side of your brain actively engaged, and then you really can't transition over the right side of the brain.",
+          "keywords": [
+            {
+              "kw": "constantly",
+              "def": "continuously; without stopping"
+            },
+            {
+              "kw": "transition",
+              "def": "to shift or move from one state to another"
+            }
+          ]
+        },
+        {
+          "text": "Which is the side of the brain that really where you find your meaning, where you're finding innovation, and really looking at the world so that you can come up with what's my purpose in life.",
+          "keywords": [
+            {
+              "kw": "come up with",
+              "def": "to think of or produce an idea"
+            }
+          ]
+        },
+        {
+          "text": "Again, we're just not putting those phones down. And when you're constantly engaged, you can't allow your brain to naturally transition over to the right.",
+          "keywords": [
+            {
+              "kw": "putting down",
+              "def": "to stop using or holding something"
+            }
+          ]
+        },
+        {
+          "text": "You have to find time to daydream and reset and relax.",
+          "keywords": [
+            {
+              "kw": "daydream",
+              "def": "to let your mind wander in pleasant thoughts"
+            },
+            {
+              "kw": "reset",
+              "def": "to return to a calm or balanced state"
+            }
+          ]
+        },
+        {
+          "text": "Dr. Ash, for everyone out there who may be feeling burned out, what can be done to manage fatigue on a daily basis?",
+          "keywords": [
+            {
+              "kw": "on a daily basis",
+              "def": "every day; regularly"
+            }
+          ]
+        }
+      ],
+      "vocab": [
+        {
+          "word": "constantly",
+          "pos": "adv.",
+          "def": "continuously; without stopping"
+        },
+        {
+          "word": "transition",
+          "pos": "v./n.",
+          "def": "to change or move from one state to another"
+        },
+        {
+          "word": "come up with",
+          "pos": "phrase",
+          "def": "to think of or produce an idea or solution"
+        },
+        {
+          "word": "daydream",
+          "pos": "v.",
+          "def": "to let your mind wander in pleasant thoughts"
+        },
+        {
+          "word": "on a daily basis",
+          "pos": "phrase",
+          "def": "every day; regularly"
+        }
+      ],
+      "speaking": [
+        {
+          "en": "Do you think you use your phone \"constantly\"? How does it affect you?",
+          "cn": "你覺得自己「不斷地」使用手機嗎？這對你有什麼影響？"
+        },
+        {
+          "en": "Have you ever had trouble finding \"meaning\" or \"purpose\" because you felt too busy or distracted?",
+          "cn": "你是否曾因為太忙或分心而難以找到「意義」或「目標」？"
+        },
+        {
+          "en": "When was the last time you let yourself daydream without a phone nearby?",
+          "cn": "你上一次沒帶手機、讓自己發呆是什麼時候？"
+        },
+        {
+          "en": "What is one small change you could make \"on a daily basis\" to reduce fatigue?",
+          "cn": "你可以做出什麼「日常」小改變來減少疲勞？"
+        },
+        {
+          "en": "Do you agree that too much screen time keeps us from finding \"innovation\" and purpose?",
+          "cn": "你同意過多的螢幕時間會阻礙我們找到「創新」與目標嗎？"
+        }
+      ]
+    },
+    {
+      "day": 5,
+      "topic_en": "Simple Fixes — Phone Down, Sleep Up, and Back to Basics",
+      "topic_cn": "簡單解方 — 放下手機、補足睡眠、回歸基本",
+      "sentences": [
+        {
+          "text": "Well, some very simple tips that everyone can follow.",
+          "keywords": [
+            {
+              "kw": "simple tips",
+              "def": "easy, practical pieces of advice"
+            }
+          ]
+        },
+        {
+          "text": "First of all, put that phone down.",
+          "keywords": [
+            {
+              "kw": "put down",
+              "def": "to stop holding or using something"
+            }
+          ]
+        },
+        {
+          "text": "You want to wind down an hour before, put the phone down, and make sure you get your 7 to 8 hours of sleep.",
+          "keywords": [
+            {
+              "kw": "wind down",
+              "def": "to relax and slow down before rest"
+            }
+          ]
+        },
+        {
+          "text": "You want to eat a well-balanced diet.",
+          "keywords": [
+            {
+              "kw": "well-balanced diet",
+              "def": "a variety of healthy foods eaten in the right proportions"
+            }
+          ]
+        },
+        {
+          "text": "I mean, studies have shown again and again, diet, exercise, and getting rid of that screen time really really are the basics that we need to get back to.",
+          "keywords": [
+            {
+              "kw": "getting rid of",
+              "def": "eliminating or removing"
+            },
+            {
+              "kw": "get back to the basics",
+              "def": "returning to fundamental, simple habits"
+            }
+          ]
+        },
+        {
+          "text": "It's counterintuitive, but that's how it works.",
+          "keywords": [
+            {
+              "kw": "counterintuitive",
+              "def": "contrary to what you would expect"
+            }
+          ]
+        }
+      ],
+      "vocab": [
+        {
+          "word": "wind down",
+          "pos": "phrase",
+          "def": "to relax and become calm before rest"
+        },
+        {
+          "word": "well-balanced diet",
+          "pos": "phrase",
+          "def": "a variety of nutritious foods eaten in the right proportions"
+        },
+        {
+          "word": "get rid of",
+          "pos": "phrase",
+          "def": "to eliminate or remove something"
+        },
+        {
+          "word": "basics",
+          "pos": "n.",
+          "def": "the fundamental or essential parts of something"
+        },
+        {
+          "word": "counterintuitive",
+          "pos": "adj.",
+          "def": "contrary to what you would expect or assume"
+        }
+      ],
+      "speaking": [
+        {
+          "en": "Do you \"wind down\" before bed? What does your routine look like?",
+          "cn": "你睡前會「放鬆緩和」嗎？你的習慣是什麼？"
+        },
+        {
+          "en": "How many hours of sleep do you usually get? Is it close to the recommended 7-8 hours?",
+          "cn": "你通常睡幾小時？接近建議的 7-8 小時嗎？"
+        },
+        {
+          "en": "Would you describe your diet as \"well-balanced\"? What would you change?",
+          "cn": "你會形容自己的飲食「均衡」嗎？你想改變什麼？"
+        },
+        {
+          "en": "Which is harder for you to give up — screen time, poor diet, or lack of exercise?",
+          "cn": "對你來說，減少螢幕時間、改善飲食、還是增加運動最難？"
+        },
+        {
+          "en": "After studying this article all week, what is your biggest takeaway about managing fatigue in daily life?",
+          "cn": "學完這篇文章一整週，你對如何管理日常疲勞，最大的收穫是什麼？"
+        }
+      ]
+    }
+  ]
+}
