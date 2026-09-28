@@ -135,7 +135,43 @@
   .flashcard-summary{text-align:center; padding:20px 10px;}
   .flashcard-summary .big{font-size:16px; font-weight:700; margin-bottom:14px;}
 
+  /* ---- speaking session (chat) ---- */
+  .chat-overlay{
+    display:none; position:fixed; inset:0; z-index:50;
+    background:rgba(0,0,0,.45);
+  }
+  .chat-overlay.show{display:flex; align-items:center; justify-content:center; padding:18px;}
+  .chat-box{
+    background:#fff; border-radius:14px; width:100%; max-width:640px;
+    height:min(86vh, 760px); display:flex; flex-direction:column; overflow:hidden;
+  }
+  .chat-head{
+    display:flex; align-items:center; gap:10px; padding:12px 16px;
+    border-bottom:1px solid var(--border); background:#fffdfb;
+  }
+  .chat-head .chat-title{font-weight:800; font-size:14.5px; flex:1; line-height:1.3;}
+  .chat-head .chat-sub{font-size:11.5px; color:var(--grey); font-weight:400;}
+  .chat-msgs{flex:1; overflow-y:auto; padding:14px 14px 6px; background:var(--bg);}
+  .chat-msg{max-width:86%; margin-bottom:10px; padding:10px 13px; border-radius:12px; font-size:14px; white-space:pre-wrap; line-height:1.55; word-break:break-word;}
+  .chat-msg.tutor{background:#fff; border:1px solid var(--border); border-bottom-left-radius:4px;}
+  .chat-msg.me{background:var(--red-light); margin-left:auto; border-bottom-right-radius:4px;}
+  .chat-msg.typing{color:var(--grey); font-style:italic;}
+  .chat-input-row{display:flex; gap:8px; padding:10px 12px; border-top:1px solid var(--border); align-items:flex-end; background:#fff;}
+  .chat-input-row textarea{flex:1; min-height:44px; max-height:120px; border-radius:10px;}
+  .chat-mic{
+    width:44px; height:44px; flex:0 0 44px; border-radius:50%;
+    border:1px dashed var(--border); background:#fafafa; color:#bbb;
+    font-size:18px; cursor:not-allowed;
+  }
+  .chat-send{height:44px;}
+  .chat-close{background:none; border:none; font-size:20px; color:var(--grey); cursor:pointer; padding:4px 8px;}
+  .chat-foot{padding:6px 14px 10px; background:#fff; display:flex; gap:8px; flex-wrap:wrap;}
+  .chat-foot .hint{margin-top:0; flex-basis:100%;}
+  .session-btn-row{margin:4px 0 14px;}
+
   @media (max-width:520px){
+    .chat-overlay.show{padding:0;}
+    .chat-box{max-width:100%; height:100%; border-radius:0;}
     .wrap{padding:18px 14px 70px;}
     header.app-header h1{font-size:20px;}
     .card{padding:16px 15px;}
@@ -268,6 +304,29 @@
   </div>
   <div class="hint" style="margin-top:-8px; margin-bottom:10px;">「匯入進度」也可以用來手動匯入 weekN_app_import.json（例如還沒 push 到 GitHub 前先預覽）；單字複習庫與作答紀錄都會保留。</div>
 
+  <!-- Speaking session chat overlay -->
+  <div class="chat-overlay" id="chatOverlay">
+    <div class="chat-box">
+      <div class="chat-head">
+        <div class="chat-title" id="chatTitle">口說教練
+          <div class="chat-sub" id="chatSub"></div>
+        </div>
+        <button class="btn ghost small" id="chatWrapBtn" type="button">直接進入總結</button>
+        <button class="chat-close" id="chatCloseBtn" type="button" aria-label="關閉">✕</button>
+      </div>
+      <div class="chat-msgs" id="chatMsgs"></div>
+      <div class="chat-input-row">
+        <button class="chat-mic" id="chatMicBtn" type="button" title="語音輸入（預留 GPT 語音接口，即將推出）">🎤</button>
+        <textarea id="chatInput" rows="1" placeholder="輸入你的英文回答..."></textarea>
+        <button class="btn chat-send" id="chatSendBtn" type="button">送出</button>
+      </div>
+      <div class="chat-foot">
+        <button class="btn ghost small" id="chatRestartBtn" type="button">重新開始這一天的對談</button>
+        <div class="hint">🎤 語音按鈕為預留接口，之後會串接 GPT 語音（Realtime / Whisper + TTS）。目前請用打字回答，對談紀錄會自動儲存在本機。</div>
+      </div>
+    </div>
+  </div>
+
   <footer class="app-footer">
     每次 AI 呼叫都會使用你自己的 OpenAI Key 並產生少量費用；批改口說回答時，你的作答內容只會傳送給 OpenAI。這個網頁建議加到手機主畫面或加入書籤，方便隨時複習。
   </footer>
@@ -284,6 +343,7 @@
     currentWeek: "",
     weeksData: {},   // weekN(string) -> {weekStart, articleEn, articleCn, days, answers}
     vocabBank: [],   // [{id, word, pos, def, sources:[{weekN,day,topic_en}], addedAt, box, nextReviewAt, seen, correct, wrong, lastReviewedAt}]
+    sessions: {},    // "weekN-day" -> {messages:[{role,content}], startedAt}
     lastSyncAt: null
   };
   var activeDay = 1;
@@ -665,6 +725,253 @@
     });
   }
 
+  // ---------- generic multi-turn chat call ----------
+  function callOpenAIChat(messages, opts){
+    opts = opts || {};
+    var apiKey = state.apiKey;
+    if(!apiKey){
+      return Promise.reject(new Error("請先在上方「AI 功能設定」填入 OpenAI API Key"));
+    }
+    var body = {
+      model: state.model || "gpt-4o-mini",
+      messages: messages,
+      temperature: opts.temperature != null ? opts.temperature : 0.7
+    };
+    return fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {"Content-Type":"application/json", "Authorization":"Bearer " + apiKey},
+      body: JSON.stringify(body)
+    }).then(function(res){
+      if(!res.ok){
+        return res.json().catch(function(){ return {}; }).then(function(errBody){
+          var msg = (errBody && errBody.error && errBody.error.message) ? errBody.error.message : ("HTTP " + res.status);
+          throw new Error(msg);
+        });
+      }
+      return res.json();
+    }).then(function(data){
+      var content = data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
+      if(!content) throw new Error("AI 沒有回傳內容，請再試一次");
+      return content;
+    });
+  }
+
+  // ---------- voice adapter (reserved interface for GPT voice) ----------
+  // 之後要串 GPT 語音（Realtime API 或 Whisper STT + TTS）時，只要實作這個介面並把
+  // available 設為 true，聊天室的麥克風按鈕就會自動啟用，不需要動其他程式碼。
+  var VoiceAdapter = {
+    available: false,          // 串接完成後改為 true
+    init: function(config){},  // 例如 {apiKey, model:"gpt-4o-realtime-preview"}
+    startRecording: function(onTranscript, onError){},  // 開始收音，辨識完成後呼叫 onTranscript(text)
+    stopRecording: function(){},
+    speak: function(text){},   // TTS 朗讀 tutor 的訊息
+    dispose: function(){}
+  };
+
+  // ---------- speaking session (2-phase conversational tutor) ----------
+  var SESSION_PROTOCOL = [
+    "You are a warm, honest English speaking tutor for a B2-C1 learner. The learner studies one bilingual",
+    "'6-Minute English' article per week, split into 5 daily speaking sessions. Today's article and the 5",
+    "speaking-practice questions are provided below. Run the session in TWO PHASES.",
+    "",
+    "PHASE 1 - Conversational Q&A (5 rounds, one question at a time):",
+    "For each of the 5 questions, follow this loop:",
+    "1. Ask the question in a natural, conversational way - like a friend or tutor in a casual chat, never",
+    "   robotically pasted. You may add one short warm-up sentence or follow-up cue to help the learner start.",
+    "2. Wait for the learner's typed answer (transcript style - may include fillers, half-sentences, typos).",
+    "3. Give feedback immediately in 3-5 short bullet points MAX, covering only what matters at B2-C1 level:",
+    "   - Mistakes: grammar errors, wrong word choices, unnatural phrasing",
+    "   - Upgrades: a more native, daily-use way to say what they meant",
+    "   - One quick win: a single phrase, collocation, or transition they could steal next time",
+    "4. Then move straight on to the next question. Do NOT rewrite their whole answer in Phase 1.",
+    "Keep the tone warm and encouraging but honest. Don't over-correct tiny A2-level slips; focus on what",
+    "actually holds back natural B2-C1 fluency.",
+    "",
+    "PHASE 2 - Polished version (after all 5 questions are answered, or if the learner asks to wrap up early):",
+    "1. Give a polished version of each of their answers, formatted as:",
+    "   Q1 - My answer (cleaned up):",
+    "   [polished version]",
+    "   ...and so on for each answered question.",
+    "   Rules: keep the learner's original meaning and personal point of view (never replace their ideas);",
+    "   sound like an everyday native B2-C1 speaker (not academic or formal); fix grammar, improve collocations,",
+    "   replace awkward phrasing; keep roughly the same length as their original answer.",
+    "2. 'Top 3 expressions to remember': pick 2-3 phrases or collocations from the polished versions worth",
+    "   memorising, with a brief note on why each is useful.",
+    "3. End with ONE short, sincere line of encouragement about something specific they did well today.",
+    "",
+    "TONE & CALIBRATION:",
+    "- Reply in English by default. Switch to Chinese only if the learner explicitly asks.",
+    "- Assume B2-C1 comprehension: don't dumb things down, don't show off rare academic words.",
+    "- Conversational, not lecture-style - like a friendly tutor having coffee with them.",
+    "- Be honest about errors, delivered kindly. No empty praise.",
+    "",
+    "YOUR FIRST MESSAGE must be a brief, friendly opener like:",
+    "\"Got it - I've read the article on [topic]. Ready when you are. Let's start with Question 1: [Q1 in your",
+    "own conversational phrasing].\""
+  ].join("\n");
+
+  var activeSessionKey = null;
+  var sessionBusy = false;
+
+  function sessionKeyFor(wn, day){ return String(wn) + "-" + day; }
+
+  function buildSessionSystemPrompt(wn, day){
+    var wd = state.weeksData[wn];
+    var d = null;
+    (wd.days||[]).forEach(function(x){ if(x.day === day) d = x; });
+    var qs = (d && d.speaking || []).map(function(q, i){ return (i+1) + ". " + q.en; }).join("\n");
+    var article = "";
+    if(wd.articleEn) article += "=== ARTICLE (English) ===\n" + wd.articleEn + "\n\n";
+    if(wd.articleCn) article += "=== ARTICLE (Chinese) ===\n" + wd.articleCn + "\n\n";
+    if(!article && d){
+      article = "=== TODAY'S KEY SENTENCES (from the article) ===\n" +
+        (d.sentences||[]).map(function(s){ return "- " + s.text; }).join("\n") + "\n\n";
+    }
+    return SESSION_PROTOCOL + "\n\n" + article +
+      "=== TODAY'S THEME ===\nWeek " + wn + ", Day " + day + ": " + (d ? d.topic_en : "") + "\n\n" +
+      "=== TODAY'S 5 SPEAKING QUESTIONS ===\n" + qs;
+  }
+
+  function getSession(wn, day){
+    if(!state.sessions) state.sessions = {};
+    var key = sessionKeyFor(wn, day);
+    if(!state.sessions[key]){
+      state.sessions[key] = {messages: [], startedAt: Date.now()};
+    }
+    return state.sessions[key];
+  }
+
+  function openSession(wn, day, topicEn){
+    activeSessionKey = sessionKeyFor(wn, day);
+    $("chatTitle").childNodes[0].textContent = "口說教練 · Week " + wn + " Day " + day;
+    $("chatSub").textContent = topicEn || "";
+    $("chatOverlay").className = "chat-overlay show";
+    var sess = getSession(wn, day);
+    renderChat(sess);
+    if(sess.messages.length === 0){
+      kickoffSession(wn, day, sess);
+    }
+  }
+
+  function closeSession(){
+    $("chatOverlay").className = "chat-overlay";
+    activeSessionKey = null;
+  }
+
+  function kickoffSession(wn, day, sess){
+    var sysPrompt = buildSessionSystemPrompt(wn, day);
+    var apiMessages = [
+      {role:"system", content: sysPrompt},
+      {role:"user", content: "Hi! I'm ready for today's speaking session. Please start."}
+    ];
+    setChatBusy(true);
+    callOpenAIChat(apiMessages, {temperature:0.7})
+      .then(function(reply){
+        sess.messages.push({role:"assistant", content: reply});
+        saveState();
+        renderChat(sess);
+      })
+      .catch(function(err){
+        appendChatError(err.message);
+      })
+      .finally(function(){ setChatBusy(false); });
+  }
+
+  function sendChatMessage(text){
+    if(!activeSessionKey || sessionBusy) return;
+    text = text.trim();
+    if(!text) return;
+    var parts = activeSessionKey.split("-");
+    var wn = parts[0], day = Number(parts[1]);
+    var sess = getSession(wn, day);
+    sess.messages.push({role:"user", content: text});
+    saveState();
+    renderChat(sess);
+    $("chatInput").value = "";
+
+    var sysPrompt = buildSessionSystemPrompt(wn, day);
+    var apiMessages = [{role:"system", content: sysPrompt},
+                       {role:"user", content: "Hi! I'm ready for today's speaking session. Please start."}]
+      .concat(sess.messages);
+    setChatBusy(true);
+    callOpenAIChat(apiMessages, {temperature:0.7})
+      .then(function(reply){
+        sess.messages.push({role:"assistant", content: reply});
+        saveState();
+        renderChat(sess);
+      })
+      .catch(function(err){
+        appendChatError(err.message);
+      })
+      .finally(function(){ setChatBusy(false); });
+  }
+
+  function requestWrapUp(){
+    if(!activeSessionKey || sessionBusy) return;
+    sendChatMessage("I'd like to wrap up now. Please give me the Phase 2 review (polished versions of my answers so far, top expressions to remember, and your closing note).");
+  }
+
+  function restartSession(){
+    if(!activeSessionKey) return;
+    if(!confirm("確定要清空這一天的對談紀錄並重新開始嗎？")) return;
+    var parts = activeSessionKey.split("-");
+    var wn = parts[0], day = Number(parts[1]);
+    state.sessions[activeSessionKey] = {messages: [], startedAt: Date.now()};
+    saveState();
+    var sess = state.sessions[activeSessionKey];
+    renderChat(sess);
+    kickoffSession(wn, day, sess);
+  }
+
+  function setChatBusy(busy){
+    sessionBusy = busy;
+    $("chatSendBtn").disabled = busy;
+    $("chatWrapBtn").disabled = busy;
+    var msgsEl = $("chatMsgs");
+    var typing = document.getElementById("chatTyping");
+    if(busy){
+      if(!typing){
+        typing = document.createElement("div");
+        typing.id = "chatTyping";
+        typing.className = "chat-msg tutor typing";
+        typing.textContent = "Tutor is typing...";
+        msgsEl.appendChild(typing);
+      }
+      msgsEl.scrollTop = msgsEl.scrollHeight;
+    }else if(typing){
+      typing.parentNode.removeChild(typing);
+    }
+  }
+
+  function appendChatError(msg){
+    var msgsEl = $("chatMsgs");
+    var div = document.createElement("div");
+    div.className = "chat-msg tutor";
+    div.style.color = "#a30000";
+    div.textContent = "發生錯誤：" + msg;
+    msgsEl.appendChild(div);
+    msgsEl.scrollTop = msgsEl.scrollHeight;
+  }
+
+  function renderChat(sess){
+    var msgsEl = $("chatMsgs");
+    msgsEl.innerHTML = "";
+    (sess.messages||[]).forEach(function(m){
+      var div = document.createElement("div");
+      div.className = "chat-msg " + (m.role === "user" ? "me" : "tutor");
+      div.textContent = m.content;
+      msgsEl.appendChild(div);
+    });
+    msgsEl.scrollTop = msgsEl.scrollHeight;
+    // voice button state (auto-enables once VoiceAdapter is wired up)
+    var mic = $("chatMicBtn");
+    if(VoiceAdapter.available){
+      mic.style.cursor = "pointer";
+      mic.style.color = "var(--red)";
+      mic.style.borderStyle = "solid";
+    }
+  }
+
   // ---------- generate 5-day plan (advanced / optional, in-browser) ----------
   var SPLIT_SYSTEM_PROMPT = [
     "You are an expert English curriculum designer creating a 5-day study plan for a Traditional-Chinese-speaking",
@@ -872,10 +1179,28 @@
 
       html += '<hr class="sep">';
       html += '<div class="sec-title">口說練習 Speaking Practice</div>';
+      html += '<div class="session-btn-row" data-day="' + d.day + '"></div>';
       html += '<div class="speaking-list" data-day="' + d.day + '"></div>';
 
       panel.innerHTML = html;
       panelsEl.appendChild(panel);
+
+      // live speaking-session button
+      var sessRow = panel.querySelector(".session-btn-row");
+      var sessBtn = document.createElement("button");
+      sessBtn.className = "btn";
+      sessBtn.type = "button";
+      var hasSession = state.sessions && state.sessions[sessionKeyFor(wn, d.day)] &&
+                       state.sessions[sessionKeyFor(wn, d.day)].messages.length > 0;
+      sessBtn.textContent = hasSession ? "🎙️ 繼續今天的口說對談" : "🎙️ 和 AI 教練開始口說對談";
+      sessBtn.addEventListener("click", function(){
+        openSession(wn, d.day, d.topic_en || "");
+      });
+      sessRow.appendChild(sessBtn);
+      var sessHint = document.createElement("div");
+      sessHint.className = "hint";
+      sessHint.textContent = "AI 已讀過本週文章和今天 5 題，會逐題和你對談、即時給重點回饋，5 題結束後給潤飾版總結。";
+      sessRow.appendChild(sessHint);
 
       // speaking blocks (built with DOM so we can attach handlers cleanly)
       var listEl = panel.querySelector(".speaking-list");
@@ -975,6 +1300,7 @@
           Object.assign(state, parsed);
           if(!state.vocabBank) state.vocabBank = [];
           if(!state.weeksData) state.weeksData = {};
+          if(!state.sessions) state.sessions = {};
         }else if(parsed.days){
           // single-week weekN_app_import.json (from export/publish script)
           var wn = String(parsed.weekN || state.currentWeek || "");
@@ -1017,6 +1343,7 @@
     loadState();
     if(!state.vocabBank) state.vocabBank = [];
     if(!state.weeksData) state.weeksData = {};
+    if(!state.sessions) state.sessions = {};
     syncFormFromState();
     renderWeekSelector();
     renderResults();
@@ -1052,7 +1379,7 @@
     $("resetBtn").addEventListener("click", function(){
       if(!confirm("確定要清空本機快取的教材與作答紀錄嗎？（API Key、單字複習庫不會被清除；重新整理後會再從雲端同步）")) return;
       var keepKey = state.apiKey, keepModel = state.model, keepVocabBank = state.vocabBank;
-      state = {apiKey: keepKey, model: keepModel, currentWeek:"", weeksData:{}, vocabBank: keepVocabBank || [], lastSyncAt:null};
+      state = {apiKey: keepKey, model: keepModel, currentWeek:"", weeksData:{}, vocabBank: keepVocabBank || [], sessions:{}, lastSyncAt:null};
       saveState();
       syncFormFromState();
       $("articleInput").value = "";
@@ -1062,6 +1389,31 @@
       renderVocabSummary();
       renderSyncInfo();
       syncFromRemote(false);
+    });
+
+    // speaking session chat
+    $("chatCloseBtn").addEventListener("click", function(){
+      closeSession();
+      renderResults(); // refresh "繼續對談" button label
+    });
+    $("chatSendBtn").addEventListener("click", function(){ sendChatMessage($("chatInput").value); });
+    $("chatInput").addEventListener("keydown", function(e){
+      if(e.key === "Enter" && !e.shiftKey && !e.isComposing){
+        e.preventDefault();
+        sendChatMessage(this.value);
+      }
+    });
+    $("chatWrapBtn").addEventListener("click", requestWrapUp);
+    $("chatRestartBtn").addEventListener("click", restartSession);
+    $("chatMicBtn").addEventListener("click", function(){
+      if(!VoiceAdapter.available){
+        alert("語音輸入即將推出：這個按鈕已預留給 GPT 語音（Realtime / Whisper + TTS），串接完成後就能直接用說的。目前請先打字回答。");
+        return;
+      }
+      VoiceAdapter.startRecording(function(text){
+        $("chatInput").value = text;
+        sendChatMessage(text);
+      }, function(err){ alert("語音辨識失敗：" + err); });
     });
 
     $("startReviewBtn").addEventListener("click", startReview);
