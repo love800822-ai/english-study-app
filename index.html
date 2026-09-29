@@ -213,16 +213,6 @@
     <p>電腦上產生本週教材 → 自動同步到這個網頁 → 手機隨時讀內容、練口說、複習單字。</p>
   </header>
 
-  <!-- Cloud sync -->
-  <div class="card" id="syncCard">
-    <h2>雲端教材同步 <span class="tag">從 GitHub Pages 自動抓取</span></h2>
-    <div class="hint" id="syncInfo">尚未同步</div>
-    <div class="toolbar" style="margin-top:10px;">
-      <button class="btn secondary small" id="syncBtn" type="button">立即重新整理</button>
-    </div>
-    <div class="status" id="syncStatus"></div>
-  </div>
-
   <!-- Settings (for optional in-browser AI features) — 隱藏中：要開回來把下一行的 style="display:none" 拿掉即可 -->
   <div class="card" style="display:none">
     <h2>AI 功能設定 <span class="tag">選用，只存在你的瀏覽器裡</span></h2>
@@ -241,25 +231,6 @@
         <div class="hint">可改成 gpt-4o 等其他模型</div>
       </div>
     </div>
-  </div>
-
-  <!-- Cross-device progress sync (GitHub private repo) -->
-  <div class="card">
-    <h2>跨裝置同步 <span class="tag">回答與單字進度自動同步到雲端</span></h2>
-    <div class="row">
-      <div class="field" style="flex:2;">
-        <label for="ghToken">GitHub Token</label>
-        <div class="apikey-row">
-          <input type="password" id="ghToken" placeholder="ghp-...">
-          <button class="btn ghost small" id="toggleGhTokenBtn" type="button">顯示</button>
-        </div>
-        <div class="hint">每台裝置貼一次即可。進度會存到你的私人 repo（english-study-progress），只有你自己看得到。</div>
-      </div>
-      <div class="field" style="flex:1; display:flex; align-items:flex-end;">
-        <button class="btn secondary" id="ghSyncNowBtn" type="button" style="width:100%;">立即同步</button>
-      </div>
-    </div>
-    <div class="status" id="ghSyncStatus"></div>
   </div>
 
   <!-- Results -->
@@ -323,6 +294,35 @@
       </div>
       <div class="flashcard-summary" id="fcSummary" style="display:none;"></div>
     </div>
+  </div>
+
+  <!-- Cloud sync -->
+  <div class="card" id="syncCard">
+    <h2>雲端教材同步 <span class="tag">從 GitHub Pages 自動抓取</span></h2>
+    <div class="hint" id="syncInfo">尚未同步</div>
+    <div class="toolbar" style="margin-top:10px;">
+      <button class="btn secondary small" id="syncBtn" type="button">立即重新整理</button>
+    </div>
+    <div class="status" id="syncStatus"></div>
+  </div>
+
+  <!-- Cross-device progress sync (GitHub private repo) -->
+  <div class="card">
+    <h2>跨裝置同步 <span class="tag">回答與單字進度自動同步到雲端</span></h2>
+    <div class="row">
+      <div class="field" style="flex:2;">
+        <label for="ghToken">GitHub Token</label>
+        <div class="apikey-row">
+          <input type="password" id="ghToken" placeholder="ghp-...">
+          <button class="btn ghost small" id="toggleGhTokenBtn" type="button">顯示</button>
+        </div>
+        <div class="hint">每台裝置貼一次即可。進度會存到你的私人 repo（english-study-progress），只有你自己看得到。</div>
+      </div>
+      <div class="field" style="flex:1; display:flex; align-items:flex-end;">
+        <button class="btn secondary" id="ghSyncNowBtn" type="button" style="width:100%;">立即同步</button>
+      </div>
+    </div>
+    <div class="status" id="ghSyncStatus"></div>
   </div>
 
   <div class="toolbar">
