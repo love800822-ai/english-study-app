@@ -1181,49 +1181,6 @@
       });
   }
 
-  // ---------- correct a speaking answer ----------
-  var CORRECT_SYSTEM_PROMPT = [
-    "You are a warm, encouraging spoken-English coach for a Traditional-Chinese-speaking B1 learner who is",
-    "intentionally practicing with C1-level material. Given a speaking practice question and the learner's",
-    "attempted answer (typed, possibly containing grammar mistakes or Chinglish phrasing), respond with plain text",
-    "(no markdown headers, no asterisks) containing exactly three short parts, each on its own paragraph:",
-    "1) An improved, natural, native-sounding English version of their answer that keeps their original meaning.",
-    "2) 2-4 bullet points in Traditional Chinese (each starting with '- ') explaining the key corrections (grammar,",
-    "   word choice, more natural phrasing).",
-    "3) One short, encouraging comment in Traditional Chinese.",
-    "Keep the whole response concise."
-  ].join("\n");
-
-  function correctAnswer(wn, dayIdx, qIdx, question, answer, feedbackEl, btn){
-    if(!answer.trim()){
-      feedbackEl.className = "feedback show";
-      feedbackEl.textContent = "請先輸入你的回答，再按「AI 批改」。";
-      return;
-    }
-    btn.disabled = true;
-    var oldText = btn.textContent;
-    btn.innerHTML = '<span class="spinner"></span> 批改中...';
-    feedbackEl.className = "feedback show";
-    feedbackEl.textContent = "AI 批改中，請稍候...";
-
-    var userPrompt = "Question: " + question + "\n\nLearner's answer: " + answer;
-    callOpenAI(CORRECT_SYSTEM_PROMPT, userPrompt, {temperature:0.5})
-      .then(function(content){
-        feedbackEl.textContent = content;
-        var wd = ensureWeekData(wn);
-        var key = dayIdx + "-" + qIdx;
-        wd.answers[key] = {answer: answer, feedback: content};
-        saveState();
-      })
-      .catch(function(err){
-        feedbackEl.textContent = "發生錯誤：" + err.message;
-      })
-      .finally(function(){
-        btn.disabled = false;
-        btn.textContent = oldText;
-      });
-  }
-
   // ---------- render ----------
   function renderResults(){
     var wn = state.currentWeek;
@@ -1383,42 +1340,10 @@
 
         var answerBox = document.createElement("textarea");
         answerBox.className = "answer-box";
-        answerBox.placeholder = "打字寫下你的回答（也可以是口說逐字稿）...";
+        answerBox.placeholder = "貼上 GPT 給你的修正回覆（polished version），方便日後回顧...";
         answerBox.value = saved ? saved.answer : "";
         block.appendChild(answerBox);
 
-        var actions = document.createElement("div");
-        actions.className = "q-actions";
-
-        var copyBtn = document.createElement("button");
-        copyBtn.className = "btn secondary small";
-        copyBtn.type = "button";
-        copyBtn.textContent = "複製提問";
-        copyBtn.addEventListener("click", function(){
-          var text = q.en + "\n" + q.cn;
-          navigator.clipboard && navigator.clipboard.writeText(text).then(function(){
-            copyBtn.textContent = "已複製！";
-            setTimeout(function(){ copyBtn.textContent = "複製提問"; }, 1500);
-          }).catch(function(){});
-        });
-        actions.appendChild(copyBtn);
-
-        var correctBtn = document.createElement("button");
-        correctBtn.className = "btn small";
-        correctBtn.type = "button";
-        correctBtn.textContent = "AI 批改";
-        actions.appendChild(correctBtn);
-
-        block.appendChild(actions);
-
-        var feedbackEl = document.createElement("div");
-        feedbackEl.className = "feedback" + (saved && saved.feedback ? " show" : "");
-        if(saved && saved.feedback) feedbackEl.textContent = saved.feedback;
-        block.appendChild(feedbackEl);
-
-        correctBtn.addEventListener("click", function(){
-          correctAnswer(wn, d.day, qIdx, q.en, answerBox.value, feedbackEl, correctBtn);
-        });
         answerBox.addEventListener("blur", function(){
           var wd2 = ensureWeekData(wn);
           var k = d.day + "-" + qIdx;
