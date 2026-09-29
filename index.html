@@ -243,6 +243,25 @@
     </div>
   </div>
 
+  <!-- Cross-device progress sync (GitHub private repo) -->
+  <div class="card">
+    <h2>跨裝置同步 <span class="tag">回答與單字進度自動同步到雲端</span></h2>
+    <div class="row">
+      <div class="field" style="flex:2;">
+        <label for="ghToken">GitHub Token</label>
+        <div class="apikey-row">
+          <input type="password" id="ghToken" placeholder="ghp-...">
+          <button class="btn ghost small" id="toggleGhTokenBtn" type="button">顯示</button>
+        </div>
+        <div class="hint">每台裝置貼一次即可。進度會存到你的私人 repo（english-study-progress），只有你自己看得到。</div>
+      </div>
+      <div class="field" style="flex:1; display:flex; align-items:flex-end;">
+        <button class="btn secondary" id="ghSyncNowBtn" type="button" style="width:100%;">立即同步</button>
+      </div>
+    </div>
+    <div class="status" id="ghSyncStatus"></div>
+  </div>
+
   <!-- Results -->
   <div class="card" id="resultsCard" style="display:none;">
     <div class="results-head">
@@ -355,6 +374,8 @@
     vocabBank: [],   // [{id, word, pos, def, sources:[{weekN,day,topic_en}], addedAt, box, nextReviewAt, seen, correct, wrong, lastReviewedAt, lastRating}]
     sessions: {},    // "weekN-day" -> {messages:[{role,content}], startedAt}
     reviewLog: {date:"", served:[]}, // 今日已複習過的單字 id（控制一天最多 25 個）
+    ghToken: "",           // GitHub token，跨裝置同步進度用
+    progressUpdatedAt: "", // 進度最後更新時間（跨裝置比對用）
     lastSyncAt: null
   };
   var activeDay = 1;
@@ -369,6 +390,7 @@
     try{
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     }catch(e){ /* storage unavailable, silently ignore - user can export manually */ }
+    ghScheduleSync();
   }
   function loadState(){
     try{
@@ -1429,9 +1451,182 @@
     reader.readAsText(file);
   }
 
+  // ---------- cross-device progress sync (GitHub private repo) ----------
+  var GH_SYNC_REPO = "love800822-ai/english-study-progress";
+  var GH_SYNC_PATH = "progress.json";
+  var ghApplyingRemote = false;
+  var ghSyncTimer = null;
+  var ghFileSha = null;
+  var ghLastPushedKey = null;
+  var ghSyncing = false;
+
+  function b64EncodeUtf8(str){ return btoa(unescape(encodeURIComponent(str))); }
+  function b64DecodeUtf8(str){ return decodeURIComponent(escape(atob(String(str).replace(/\s/g, "")))); }
+  function ghHeaders(){
+    return {"Authorization": "token " + state.ghToken, "Accept": "application/vnd.github+json"};
+  }
+  function ghSetStatus(type, msg){ setStatus($("ghSyncStatus"), type, msg); }
+
+  function collectProgress(){
+    var answers = {};
+    Object.keys(state.weeksData || {}).forEach(function(wn){
+      var a = state.weeksData[wn].answers;
+      if(a && Object.keys(a).length) answers[wn] = a;
+    });
+    return {
+      updatedAt: state.progressUpdatedAt || "",
+      answers: answers,
+      vocabBank: state.vocabBank || [],
+      reviewLog: state.reviewLog || {date:"", served:[]}
+    };
+  }
+  function ghContentKey(p){
+    return JSON.stringify({a: p.answers || {}, v: p.vocabBank || [], r: p.reviewLog || null});
+  }
+  // 合併雲端進度（不是整份覆蓋）：兩邊都有的以雲端為準，只存在本機的資料會保留，不會被清空
+  function applyProgress(p){
+    ghApplyingRemote = true;
+    try{
+      if(Array.isArray(p.vocabBank)){
+        var byId = {};
+        state.vocabBank.forEach(function(e){ byId[e.id] = e; });
+        p.vocabBank.forEach(function(r){
+          if(typeof r.box !== "number" || r.box < 0) r.box = 0;
+          if(r.box > BOX_INTERVALS.length - 1) r.box = BOX_INTERVALS.length - 1;
+          if(!("lastRating" in r)) r.lastRating = null;
+          var local = byId[r.id];
+          if(!local){
+            byId[r.id] = r;
+            state.vocabBank.push(r);
+          }else if((r.lastReviewedAt || "") >= (local.lastReviewedAt || "")){
+            // 雲端這個字複習得比較新（或本機沒複習過）→ 採用雲端的進度
+            var idx = state.vocabBank.indexOf(local);
+            state.vocabBank[idx] = r;
+            byId[r.id] = r;
+          }
+        });
+      }
+      if(p.reviewLog && Array.isArray(p.reviewLog.served)){
+        var lr = state.reviewLog || {date:"", served:[]};
+        if((p.reviewLog.date || "") > (lr.date || "")){
+          state.reviewLog = p.reviewLog;
+        }else if(p.reviewLog.date === lr.date){
+          p.reviewLog.served.forEach(function(id){
+            if(lr.served.indexOf(id) < 0) lr.served.push(id);
+          });
+        }
+      }
+      if(p.answers){
+        Object.keys(p.answers).forEach(function(wn){
+          var wd = ensureWeekData(wn);
+          var remoteA = p.answers[wn] || {};
+          Object.keys(remoteA).forEach(function(k){
+            var r = remoteA[k];
+            if(r && r.answer) wd.answers[k] = r; // 雲端有內容才覆蓋；本機獨有的回答保留
+          });
+        });
+      }
+      state.progressUpdatedAt = p.updatedAt || "";
+      saveState();
+    }finally{
+      ghApplyingRemote = false;
+    }
+    renderResults();
+    renderVocabSummary();
+  }
+
+  function ghScheduleSync(){
+    if(ghApplyingRemote || !state.ghToken) return;
+    if(ghSyncTimer) clearTimeout(ghSyncTimer);
+    ghSyncTimer = setTimeout(ghPushProgress, 3000);
+  }
+
+  function ghFetchRemote(){
+    return fetch("https://api.github.com/repos/" + GH_SYNC_REPO + "/contents/" + GH_SYNC_PATH + "?ref=main&nocache=" + Date.now(), {headers: ghHeaders(), cache: "no-store"})
+      .then(function(res){
+        if(res.status === 404){ ghFileSha = null; return null; }
+        if(res.status === 401) throw new Error("Token 無效或已過期");
+        if(!res.ok) throw new Error("HTTP " + res.status);
+        return res.json();
+      })
+      .then(function(json){
+        if(!json) return null;
+        ghFileSha = json.sha;
+        try{ return JSON.parse(b64DecodeUtf8(json.content)); }
+        catch(e){ return null; }
+      });
+  }
+
+  function ghPushProgress(){
+    if(!state.ghToken) return;
+    var p = collectProgress();
+    var key = ghContentKey(p);
+    if(key === ghLastPushedKey) return;          // 內容沒變，不用推
+    if(ghSyncing){ ghScheduleSync(); return; }   // 正在同步，稍後再推
+    ghSyncing = true;
+    p.updatedAt = new Date().toISOString();
+    function doPut(){
+      var body = {message: "sync progress", content: b64EncodeUtf8(JSON.stringify(p, null, 1)), branch: "main"};
+      if(ghFileSha) body.sha = ghFileSha;
+      return fetch("https://api.github.com/repos/" + GH_SYNC_REPO + "/contents/" + GH_SYNC_PATH, {
+        method: "PUT", headers: ghHeaders(), body: JSON.stringify(body)
+      });
+    }
+    doPut().then(function(res){
+      if(res.status === 409 || res.status === 422){
+        return ghFetchRemote().then(doPut);      // sha 過期，抓最新的再推一次
+      }
+      return res;
+    }).then(function(res){
+      if(!res.ok) throw new Error(res.status === 401 ? "Token 無效或已過期" : "HTTP " + res.status);
+      return res.json();
+    }).then(function(json){
+      if(json && json.content && json.content.sha) ghFileSha = json.content.sha;
+      ghLastPushedKey = key;
+      ghApplyingRemote = true;
+      state.progressUpdatedAt = p.updatedAt;
+      saveState();
+      ghApplyingRemote = false;
+      ghSetStatus("ok", "已同步 ✓ " + new Date().toLocaleTimeString());
+    }).catch(function(err){
+      ghSetStatus("err", "同步失敗：" + err.message);
+    }).finally(function(){
+      ghSyncing = false;
+    });
+  }
+
+  function ghPullProgress(manual){
+    if(!state.ghToken){
+      if(manual) ghSetStatus("err", "請先貼上 GitHub Token");
+      return;
+    }
+    ghSetStatus("ok", "同步中...");
+    ghFetchRemote().then(function(remote){
+      if(!remote){
+        ghSetStatus("ok", "雲端還沒有進度，上傳這台裝置的進度中...");
+        ghLastPushedKey = null;
+        ghPushProgress();
+        return;
+      }
+      var localAt = state.progressUpdatedAt || "";
+      if((remote.updatedAt || "") > localAt){
+        applyProgress(remote);
+        ghLastPushedKey = ghContentKey(remote);
+        ghSetStatus("ok", "已載入雲端最新進度（" + new Date(remote.updatedAt).toLocaleString() + "）");
+        ghScheduleSync(); // 合併後若本機還有雲端沒有的資料，回推上去
+      }else{
+        ghLastPushedKey = null;
+        ghPushProgress();
+      }
+    }).catch(function(err){
+      ghSetStatus("err", "同步失敗：" + err.message);
+    });
+  }
+
   function syncFormFromState(){
     $("apiKey").value = state.apiKey || "";
     $("modelInput").value = state.model || "gpt-4o-mini";
+    $("ghToken").value = state.ghToken || "";
     if(!$("weekStart").value) $("weekStart").value = nextMonday();
   }
 
@@ -1462,6 +1657,19 @@
     $("apiKey").addEventListener("change", function(){ state.apiKey = this.value.trim(); saveState(); });
     $("modelInput").addEventListener("change", function(){ state.model = this.value.trim(); saveState(); });
 
+    $("toggleGhTokenBtn").addEventListener("click", function(){
+      var input = $("ghToken");
+      if(input.type === "password"){ input.type = "text"; this.textContent = "隱藏"; }
+      else{ input.type = "password"; this.textContent = "顯示"; }
+    });
+    $("ghToken").addEventListener("change", function(){
+      state.ghToken = this.value.trim();
+      saveState();
+      if(state.ghToken) ghPullProgress(true);
+    });
+    $("ghSyncNowBtn").addEventListener("click", function(){ ghLastPushedKey = null; ghPullProgress(true); });
+    if(state.ghToken) ghPullProgress(false);
+
     $("generateBtn").addEventListener("click", generatePlan);
 
     $("weekSelector").addEventListener("change", function(){ switchWeek(this.value); });
@@ -1476,7 +1684,9 @@
     $("resetBtn").addEventListener("click", function(){
       if(!confirm("確定要清空本機快取的教材與作答紀錄嗎？（API Key、單字複習庫不會被清除；重新整理後會再從雲端同步）")) return;
       var keepKey = state.apiKey, keepModel = state.model, keepVocabBank = state.vocabBank;
-      state = {apiKey: keepKey, model: keepModel, currentWeek:"", weeksData:{}, vocabBank: keepVocabBank || [], sessions:{}, lastSyncAt:null};
+      var keepGhToken = state.ghToken, keepProgressAt = state.progressUpdatedAt, keepReviewLog = state.reviewLog;
+      state = {apiKey: keepKey, model: keepModel, currentWeek:"", weeksData:{}, vocabBank: keepVocabBank || [], sessions:{},
+               reviewLog: keepReviewLog || {date:"", served:[]}, ghToken: keepGhToken || "", progressUpdatedAt: keepProgressAt || "", lastSyncAt:null};
       saveState();
       syncFormFromState();
       $("articleInput").value = "";
