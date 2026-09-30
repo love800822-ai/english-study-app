@@ -491,7 +491,7 @@
     fetch("https://api.openai.com/v1/audio/speech", {
       method: "POST",
       headers: {"Content-Type":"application/json", "Authorization":"Bearer " + state.apiKey},
-      body: JSON.stringify({model:"gpt-4o-mini-tts", voice:"alloy", input:text})
+      body: JSON.stringify({model:"gpt-4o-mini-tts", voice:"onyx", input:text})
     }).then(function(res){
       if(!res.ok) throw new Error("TTS HTTP " + res.status);
       return res.blob();
