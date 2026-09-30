@@ -178,6 +178,14 @@
   .sentence .txt .speak-btn{margin-top:1px;}
   .session-btn-row{margin:4px 0 14px; display:flex; flex-wrap:wrap; gap:8px; align-items:center;}
   .session-btn-row .hint{flex-basis:100%;}
+
+  /* ---- settings modal (雲端教材同步 / 跨裝置同步 / GPT 設定 彈窗) ---- */
+  .settings-modal{display:none; position:fixed; inset:0; z-index:60; background:rgba(0,0,0,.45);}
+  .settings-modal.show{display:flex; align-items:center; justify-content:center; padding:18px;}
+  .settings-modal .modal-box{width:100%; max-width:640px; max-height:88vh; overflow-y:auto;}
+  .settings-modal .modal-close-row{text-align:right; margin-bottom:4px;}
+  .settings-modal .modal-close-row .chat-close{color:#fff; font-size:22px;}
+  .settings-modal .card{margin-bottom:0;}
   @media (max-width:520px){
     .session-btn-row .btn{width:100%; justify-content:center; margin-left:0 !important;}
   }
@@ -276,6 +284,9 @@
     </div>
   </div>
 
+  <!-- 三張設定卡平常隱藏，點下方按鈕以彈窗開啟 -->
+  <div id="hiddenSettings" style="display:none">
+
   <!-- Cloud sync -->
   <div class="card" id="syncCard">
     <h2>雲端教材同步 <span class="tag">從 GitHub Pages 自動抓取</span></h2>
@@ -287,7 +298,7 @@
   </div>
 
   <!-- Cross-device progress sync (GitHub private repo) -->
-  <div class="card">
+  <div class="card" id="ghSyncCard">
     <h2>跨裝置同步 <span class="tag">回答與單字進度自動同步到雲端</span></h2>
     <div class="row">
       <div class="field" style="flex:2;">
@@ -306,7 +317,7 @@
   </div>
 
   <!-- GPT settings (TTS + speaking coach) -->
-  <div class="card">
+  <div class="card" id="gptCard">
     <h2>GPT 設定 <span class="tag">朗讀與口說對談用，Key 只存在你的瀏覽器裡</span></h2>
     <div class="row">
       <div class="field" style="flex:2;">
@@ -325,6 +336,14 @@
     </div>
   </div>
 
+  </div><!-- /hiddenSettings -->
+
+  <div class="toolbar">
+    <button class="btn ghost small" id="openSyncCardBtn" type="button">☁️ 雲端教材同步</button>
+    <button class="btn ghost small" id="openGhCardBtn" type="button">📱 跨裝置同步</button>
+    <button class="btn ghost small" id="openGptCardBtn" type="button">🤖 GPT 設定</button>
+  </div>
+
   <div class="toolbar">
     <button class="btn ghost small" id="exportBtn" type="button">匯出進度（JSON 備份）</button>
     <button class="btn ghost small" id="importBtn" type="button">匯入進度／匯入週教材</button>
@@ -332,6 +351,16 @@
     <button class="btn ghost small" id="resetBtn" type="button">清空本機快取</button>
   </div>
   <div class="hint" style="margin-top:-8px; margin-bottom:10px;">「匯入進度」也可以用來手動匯入 weekN_app_import.json（例如還沒 push 到 GitHub 前先預覽）；單字複習庫與作答紀錄都會保留。</div>
+
+  <!-- Settings modal (shows one of the hidden setting cards) -->
+  <div class="settings-modal" id="settingsModal">
+    <div class="modal-box">
+      <div class="modal-close-row">
+        <button class="chat-close" id="settingsModalClose" type="button" aria-label="關閉">✕</button>
+      </div>
+      <div id="settingsModalContent"></div>
+    </div>
+  </div>
 
   <!-- Speaking session chat overlay -->
   <div class="chat-overlay" id="chatOverlay">
@@ -1769,6 +1798,24 @@
     });
   }
 
+  // ---------- settings modal（雲端教材同步 / 跨裝置同步 / GPT 設定 彈窗） ----------
+  function openSettingsCard(cardId){
+    var card = $(cardId);
+    if(!card) return;
+    var content = $("settingsModalContent");
+    content.innerHTML = "";
+    content.appendChild(card); // 移動節點，事件綁定都會保留
+    $("settingsModal").className = "settings-modal show";
+  }
+  function closeSettingsModal(){
+    var content = $("settingsModalContent");
+    var home = $("hiddenSettings");
+    while(content.firstChild){
+      home.appendChild(content.firstChild); // 關閉時放回隱藏容器
+    }
+    $("settingsModal").className = "settings-modal";
+  }
+
   function syncFormFromState(){
     $("apiKey").value = state.apiKey || "";
     $("modelInput").value = state.model || "gpt-4o-mini";
@@ -1820,6 +1867,14 @@
 
     $("weekSelector").addEventListener("change", function(){ switchWeek(this.value); });
     $("syncBtn").addEventListener("click", function(){ syncFromRemote(true); });
+
+    $("openSyncCardBtn").addEventListener("click", function(){ openSettingsCard("syncCard"); });
+    $("openGhCardBtn").addEventListener("click", function(){ openSettingsCard("ghSyncCard"); });
+    $("openGptCardBtn").addEventListener("click", function(){ openSettingsCard("gptCard"); });
+    $("settingsModalClose").addEventListener("click", closeSettingsModal);
+    $("settingsModal").addEventListener("click", function(e){
+      if(e.target === this) closeSettingsModal(); // 點背景關閉
+    });
 
     $("exportBtn").addEventListener("click", exportState);
     $("importBtn").addEventListener("click", function(){ $("importFile").click(); });
