@@ -213,26 +213,6 @@
     <p>電腦上產生本週教材 → 自動同步到這個網頁 → 手機隨時讀內容、練口說、複習單字。</p>
   </header>
 
-  <!-- Settings (for optional in-browser AI features) — 隱藏中：要開回來把下一行的 style="display:none" 拿掉即可 -->
-  <div class="card" style="display:none">
-    <h2>AI 功能設定 <span class="tag">選用，只存在你的瀏覽器裡</span></h2>
-    <div class="row">
-      <div class="field" style="flex:2;">
-        <label for="apiKey">OpenAI API Key</label>
-        <div class="apikey-row">
-          <input type="password" id="apiKey" placeholder="sk-...">
-          <button class="btn ghost small" id="toggleKeyBtn" type="button">顯示</button>
-        </div>
-        <div class="hint">口說批改功能需要用到；Key 只會存在這台裝置的瀏覽器裡，直接呼叫 OpenAI，不會經過任何其他伺服器。</div>
-      </div>
-      <div class="field" style="flex:1;">
-        <label for="modelInput">模型名稱</label>
-        <input type="text" id="modelInput" value="gpt-4o-mini">
-        <div class="hint">可改成 gpt-4o 等其他模型</div>
-      </div>
-    </div>
-  </div>
-
   <!-- Results -->
   <div class="card" id="resultsCard" style="display:none;">
     <div class="results-head">
@@ -325,6 +305,26 @@
     <div class="status" id="ghSyncStatus"></div>
   </div>
 
+  <!-- GPT settings (TTS + speaking coach) -->
+  <div class="card">
+    <h2>GPT 設定 <span class="tag">朗讀與口說對談用，Key 只存在你的瀏覽器裡</span></h2>
+    <div class="row">
+      <div class="field" style="flex:2;">
+        <label for="apiKey">OpenAI API Key</label>
+        <div class="apikey-row">
+          <input type="password" id="apiKey" placeholder="sk-...">
+          <button class="btn ghost small" id="toggleKeyBtn" type="button">顯示</button>
+        </div>
+        <div class="hint">貼上後：朗讀改用 GPT 自然聲音、口說對談可用麥克風說英文、練習結束自動填入修正版。沒貼 Key 時朗讀會用瀏覽器內建聲音。Key 只存在這台裝置，直接呼叫 OpenAI，不經過其他伺服器。</div>
+      </div>
+      <div class="field" style="flex:1;">
+        <label for="modelInput">模型名稱</label>
+        <input type="text" id="modelInput" value="gpt-4o-mini">
+        <div class="hint">可改成 gpt-4o 等其他模型</div>
+      </div>
+    </div>
+  </div>
+
   <div class="toolbar">
     <button class="btn ghost small" id="exportBtn" type="button">匯出進度（JSON 備份）</button>
     <button class="btn ghost small" id="importBtn" type="button">匯入進度／匯入週教材</button>
@@ -345,13 +345,13 @@
       </div>
       <div class="chat-msgs" id="chatMsgs"></div>
       <div class="chat-input-row">
-        <button class="chat-mic" id="chatMicBtn" type="button" title="語音輸入（預留 GPT 語音接口，即將推出）">🎤</button>
+        <button class="chat-mic" id="chatMicBtn" type="button" title="按一下開始用英文說，再按一下結束">🎤</button>
         <textarea id="chatInput" rows="1" placeholder="輸入你的英文回答..."></textarea>
         <button class="btn chat-send" id="chatSendBtn" type="button">送出</button>
       </div>
       <div class="chat-foot">
         <button class="btn ghost small" id="chatRestartBtn" type="button">重新開始這一天的對談</button>
-        <div class="hint">🎤 語音按鈕為預留接口，之後會串接 GPT 語音（Realtime / Whisper + TTS）。目前請用打字回答，對談紀錄會自動儲存在本機。</div>
+        <div class="hint">🎤 按一下開始說英文、再按一下結束，GPT 會辨識後自動送出；也可以直接打字。教練的回覆會自動朗讀（GPT 聲音），按訊息旁的 🔊 可重聽。練習結束（總結）後，修正版會自動填入當天的口說練習欄位。</div>
       </div>
     </div>
   </div>
@@ -441,7 +441,22 @@
     el.className = "status";
     el.textContent = "";
   }
-  function speakText(text){
+  // ---------- 朗讀：有 API Key 時用 GPT 自然聲音，沒有（或失敗）退回瀏覽器內建 ----------
+  var ttsCache = {};   // text -> object URL，同一句只呼叫一次 API
+  var ttsAudio = null; // 目前播放中的 Audio
+  function stopSpeaking(){
+    if(ttsAudio){
+      try{ ttsAudio.pause(); }catch(e){}
+      ttsAudio = null;
+    }
+    if(window.speechSynthesis) window.speechSynthesis.cancel();
+  }
+  function playTtsUrl(url){
+    stopSpeaking();
+    ttsAudio = new Audio(url);
+    ttsAudio.play().catch(function(){ /* 使用者未互動前瀏覽器可能擋自動播放，忽略 */ });
+  }
+  function speakTextLocal(text){
     if(!window.speechSynthesis || !window.SpeechSynthesisUtterance){
       alert("這台裝置的瀏覽器不支援語音朗讀");
       return;
@@ -459,6 +474,34 @@
     }
     if(pick) u.voice = pick;
     window.speechSynthesis.speak(u);
+  }
+  function speakText(text){
+    text = String(text || "").trim();
+    if(!text) return;
+    if(text.length > 4000) text = text.slice(0, 4000); // TTS API 上限保護
+    stopSpeaking();
+    if(!state.apiKey){
+      speakTextLocal(text);
+      return;
+    }
+    if(ttsCache[text]){
+      playTtsUrl(ttsCache[text]);
+      return;
+    }
+    fetch("https://api.openai.com/v1/audio/speech", {
+      method: "POST",
+      headers: {"Content-Type":"application/json", "Authorization":"Bearer " + state.apiKey},
+      body: JSON.stringify({model:"gpt-4o-mini-tts", voice:"alloy", input:text})
+    }).then(function(res){
+      if(!res.ok) throw new Error("TTS HTTP " + res.status);
+      return res.blob();
+    }).then(function(blob){
+      var url = URL.createObjectURL(blob);
+      ttsCache[text] = url;
+      playTtsUrl(url);
+    }).catch(function(){
+      speakTextLocal(text); // GPT 朗讀失敗時退回內建聲音
+    });
   }
   function localDateStr(d){
     return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0");
@@ -819,7 +862,7 @@
     opts = opts || {};
     var apiKey = state.apiKey;
     if(!apiKey){
-      return Promise.reject(new Error("請先在上方設定欄填入 OpenAI API Key"));
+      return Promise.reject(new Error("請先在頁面下方「GPT 設定」填入 OpenAI API Key"));
     }
     var body = {
       model: state.model || "gpt-4o-mini",
@@ -859,7 +902,7 @@
     opts = opts || {};
     var apiKey = state.apiKey;
     if(!apiKey){
-      return Promise.reject(new Error("請先在上方「AI 功能設定」填入 OpenAI API Key"));
+      return Promise.reject(new Error("請先在頁面下方「GPT 設定」填入 OpenAI API Key"));
     }
     var body = {
       model: state.model || "gpt-4o-mini",
@@ -885,17 +928,64 @@
     });
   }
 
-  // ---------- voice adapter (reserved interface for GPT voice) ----------
-  // 之後要串 GPT 語音（Realtime API 或 Whisper STT + TTS）時，只要實作這個介面並把
-  // available 設為 true，聊天室的麥克風按鈕就會自動啟用，不需要動其他程式碼。
-  var VoiceAdapter = {
-    available: false,          // 串接完成後改為 true
-    init: function(config){},  // 例如 {apiKey, model:"gpt-4o-realtime-preview"}
-    startRecording: function(onTranscript, onError){},  // 開始收音，辨識完成後呼叫 onTranscript(text)
-    stopRecording: function(){},
-    speak: function(text){},   // TTS 朗讀 tutor 的訊息
-    dispose: function(){}
-  };
+  // ---------- voice input：MediaRecorder 錄音 → GPT 語音轉文字 ----------
+  var VoiceAdapter = (function(){
+    var recorder = null;
+    var chunks = [];
+    var recording = false;
+    function transcribe(blob, onTranscript, onError){
+      var fname = (blob.type && blob.type.indexOf("mp4") >= 0) ? "audio.mp4" : "audio.webm";
+      var fd = new FormData();
+      fd.append("file", blob, fname);
+      fd.append("model", "gpt-4o-mini-transcribe");
+      fd.append("language", "en");
+      fetch("https://api.openai.com/v1/audio/transcriptions", {
+        method: "POST",
+        headers: {"Authorization": "Bearer " + state.apiKey},
+        body: fd
+      }).then(function(res){
+        if(!res.ok){
+          return res.json().catch(function(){ return {}; }).then(function(b){
+            throw new Error((b && b.error && b.error.message) || ("HTTP " + res.status));
+          });
+        }
+        return res.json();
+      }).then(function(data){
+        onTranscript(String(data.text || "").trim());
+      }).catch(function(e){
+        onError(e.message);
+      });
+    }
+    return {
+      isAvailable: function(){
+        return !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia && window.MediaRecorder);
+      },
+      isRecording: function(){ return recording; },
+      startRecording: function(onStarted, onTranscript, onError){
+        navigator.mediaDevices.getUserMedia({audio:true}).then(function(stream){
+          chunks = [];
+          var mime = (window.MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported("audio/webm")) ? "audio/webm" : "";
+          recorder = mime ? new MediaRecorder(stream, {mimeType:mime}) : new MediaRecorder(stream);
+          recorder.ondataavailable = function(e){ if(e.data && e.data.size) chunks.push(e.data); };
+          recorder.onstop = function(){
+            stream.getTracks().forEach(function(t){ t.stop(); });
+            recording = false;
+            var blob = new Blob(chunks, {type: recorder.mimeType || "audio/webm"});
+            if(blob.size < 1000){ onError("沒有錄到聲音，請再試一次"); return; }
+            transcribe(blob, onTranscript, onError);
+          };
+          recorder.start();
+          recording = true;
+          onStarted();
+        }).catch(function(){
+          onError("無法使用麥克風，請確認瀏覽器的麥克風權限");
+        });
+      },
+      stopRecording: function(){
+        if(recorder && recording) recorder.stop();
+      }
+    };
+  })();
 
   // ---------- speaking session (2-phase conversational tutor) ----------
   var SESSION_PROTOCOL = [
@@ -985,6 +1075,7 @@
   function closeSession(){
     $("chatOverlay").className = "chat-overlay";
     activeSessionKey = null;
+    stopSpeaking();
   }
 
   function kickoffSession(wn, day, sess){
@@ -999,6 +1090,7 @@
         sess.messages.push({role:"assistant", content: reply});
         saveState();
         renderChat(sess);
+        speakText(reply);
       })
       .catch(function(err){
         appendChatError(err.message);
@@ -1028,11 +1120,48 @@
         sess.messages.push({role:"assistant", content: reply});
         saveState();
         renderChat(sess);
+        speakText(reply);
+        maybeExtractPolished(wn, day, reply);
       })
       .catch(function(err){
         appendChatError(err.message);
       })
       .finally(function(){ setChatBusy(false); });
+  }
+
+  // Phase 2 總結出現時，自動抽出每題的修正版並填入當天口說練習欄位
+  function maybeExtractPolished(wn, day, reply){
+    if(!/cleaned up|polished/i.test(reply)) return;
+    var sys = [
+      "You are a data extractor. The user message is an English tutor's Phase-2 wrap-up that contains",
+      "polished (cleaned up) versions of a learner's answers to numbered speaking questions (Q1-Q5).",
+      "Extract them. Output ONLY a JSON object of this exact shape:",
+      "{\"answers\":[{\"q\":1,\"text\":\"...\"}]}",
+      "where q is the question number and text is ONLY the full polished answer (no labels, no commentary).",
+      "If the message contains no polished answers, output {\"answers\":[]}."
+    ].join("\n");
+    callOpenAI(sys, reply, {json:true, temperature:0})
+      .then(function(content){
+        var data = JSON.parse(content);
+        var list = (data && data.answers) || [];
+        var wd = ensureWeekData(wn);
+        var filled = 0;
+        list.forEach(function(a){
+          var qn = Number(a.q);
+          if(!(qn >= 1 && qn <= 5) || !a.text) return;
+          var k = day + "-" + (qn - 1);
+          var existing = wd.answers[k] || {};
+          existing.answer = String(a.text).trim();
+          wd.answers[k] = existing;
+          filled++;
+        });
+        if(filled){
+          saveState();
+          renderResults();
+          appendChatInfo("已自動把 " + filled + " 題的修正版填入「口說練習」欄位 ✅（會跟著同步到其他裝置）");
+        }
+      })
+      .catch(function(){ /* 抽取失敗就維持手動貼上，不打斷對談 */ });
   }
 
   function requestWrapUp(){
@@ -1082,23 +1211,40 @@
     msgsEl.scrollTop = msgsEl.scrollHeight;
   }
 
+  function appendChatInfo(msg){
+    var msgsEl = $("chatMsgs");
+    var div = document.createElement("div");
+    div.className = "chat-msg tutor";
+    div.style.color = "#1a7a3a";
+    div.textContent = msg;
+    msgsEl.appendChild(div);
+    msgsEl.scrollTop = msgsEl.scrollHeight;
+  }
+
   function renderChat(sess){
     var msgsEl = $("chatMsgs");
     msgsEl.innerHTML = "";
     (sess.messages||[]).forEach(function(m){
       var div = document.createElement("div");
       div.className = "chat-msg " + (m.role === "user" ? "me" : "tutor");
-      div.textContent = m.content;
+      div.appendChild(document.createTextNode(m.content));
+      if(m.role !== "user"){
+        var sp = document.createElement("button");
+        sp.className = "speak-btn";
+        sp.type = "button";
+        sp.textContent = "🔊";
+        sp.title = "朗讀這則訊息";
+        (function(content){
+          sp.addEventListener("click", function(ev){
+            ev.stopPropagation();
+            speakText(content);
+          });
+        })(m.content);
+        div.appendChild(sp);
+      }
       msgsEl.appendChild(div);
     });
     msgsEl.scrollTop = msgsEl.scrollHeight;
-    // voice button state (auto-enables once VoiceAdapter is wired up)
-    var mic = $("chatMicBtn");
-    if(VoiceAdapter.available){
-      mic.style.cursor = "pointer";
-      mic.style.color = "var(--red)";
-      mic.style.borderStyle = "solid";
-    }
   }
 
   // ---------- generate 5-day plan (advanced / optional, in-browser) ----------
@@ -1333,7 +1479,7 @@
 
       var sessHint = document.createElement("div");
       sessHint.className = "hint";
-      sessHint.textContent = "兩種練法：① 直接在這裡和 AI 教練打字對談；② 按「複製 Prompt」→ 開啟 ChatGPT 貼上 → 切到語音模式，就能用說的照同一套流程練（逐題回饋＋最後總結）。";
+      sessHint.textContent = "建議練法：按「和 AI 教練開始口說對談」，用 🎤 直接說英文（GPT 辨識＋自然聲音回覆），結束後修正版會自動填入下方欄位。也可以按「複製 Prompt」到 ChatGPT 練。";
       sessRow.appendChild(sessHint);
 
       // speaking blocks (built with DOM so we can attach handlers cleanly)
@@ -1362,7 +1508,7 @@
 
         var answerBox = document.createElement("textarea");
         answerBox.className = "answer-box";
-        answerBox.placeholder = "貼上 GPT 給你的修正回覆（polished version），方便日後回顧...";
+        answerBox.placeholder = "口說對談結束後，GPT 修正版會自動填到這裡；也可以自己貼上或編輯...";
         answerBox.value = saved ? saved.answer : "";
         block.appendChild(answerBox);
 
@@ -1712,15 +1858,55 @@
     });
     $("chatWrapBtn").addEventListener("click", requestWrapUp);
     $("chatRestartBtn").addEventListener("click", restartSession);
+    function setMicState(mode){
+      var mic = $("chatMicBtn");
+      if(mode === "rec"){
+        mic.textContent = "⏹";
+        mic.style.color = "#c0392b";
+        mic.style.borderColor = "#c0392b";
+        mic.title = "錄音中，按一下結束並送出";
+      }else if(mode === "busy"){
+        mic.textContent = "⏳";
+        mic.style.color = "";
+        mic.style.borderColor = "";
+        mic.title = "辨識中...";
+      }else{
+        mic.textContent = "🎤";
+        mic.style.color = "";
+        mic.style.borderColor = "";
+        mic.title = "按一下開始用英文說，再按一下結束";
+      }
+    }
     $("chatMicBtn").addEventListener("click", function(){
-      if(!VoiceAdapter.available){
-        alert("語音輸入即將推出：這個按鈕已預留給 GPT 語音（Realtime / Whisper + TTS），串接完成後就能直接用說的。目前請先打字回答。");
+      if(!state.apiKey){
+        alert("語音輸入需要 OpenAI API Key：請先在頁面下方「GPT 設定」貼上你的 Key。");
         return;
       }
-      VoiceAdapter.startRecording(function(text){
-        $("chatInput").value = text;
-        sendChatMessage(text);
-      }, function(err){ alert("語音辨識失敗：" + err); });
+      if(!VoiceAdapter.isAvailable()){
+        alert("這個瀏覽器不支援錄音，請改用打字回答。");
+        return;
+      }
+      if(VoiceAdapter.isRecording()){
+        setMicState("busy");
+        VoiceAdapter.stopRecording();
+        return;
+      }
+      VoiceAdapter.startRecording(
+        function(){ setMicState("rec"); },
+        function(text){
+          setMicState("idle");
+          if(text){
+            $("chatInput").value = text;
+            sendChatMessage(text);
+          }else{
+            alert("沒有聽清楚，請再說一次");
+          }
+        },
+        function(err){
+          setMicState("idle");
+          alert("語音辨識失敗：" + err);
+        }
+      );
     });
 
     $("startReviewBtn").addEventListener("click", startReview);
