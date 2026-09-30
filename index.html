@@ -1096,6 +1096,23 @@
       "=== TODAY'S 5 SPEAKING QUESTIONS ===\n" + qs;
   }
 
+  // 只含今日教材（給 ChatGPT Project 用，規則已存在 Project 自訂指令裡）
+  function buildDailyMaterialPrompt(wn, day){
+    var wd = state.weeksData[wn];
+    var d = null;
+    (wd.days||[]).forEach(function(x){ if(x.day === day) d = x; });
+    var qs = (d && d.speaking || []).map(function(q, i){ return (i+1) + ". " + q.en; }).join("\n");
+    var out = "Today's session material:\n\n" +
+      "=== TODAY'S THEME ===\nWeek " + wn + ", Day " + day + ": " + (d ? d.topic_en : "") + "\n\n";
+    if(d && d.sentences && d.sentences.length){
+      out += "=== TODAY'S KEY SENTENCES ===\n" +
+        d.sentences.map(function(s){ return "- " + s.text; }).join("\n") + "\n\n";
+    }
+    out += "=== TODAY'S 5 SPEAKING QUESTIONS ===\n" + qs +
+      "\n\nBegin the session now: give me your friendly opener and Question 1.";
+    return out;
+  }
+
   function getSession(wn, day){
     if(!state.sessions) state.sessions = {};
     var key = sessionKeyFor(wn, day);
@@ -1512,6 +1529,28 @@
         }
       });
       sessRow.appendChild(gptBtn);
+
+      // copy only today's material (for ChatGPT Project users - rules live in the Project instructions)
+      var dailyBtn = document.createElement("button");
+      dailyBtn.className = "btn secondary";
+      dailyBtn.type = "button";
+      dailyBtn.style.marginLeft = "8px";
+      dailyBtn.textContent = "📄 只複製今日 5 題（Project 用）";
+      dailyBtn.addEventListener("click", function(){
+        var prompt = buildDailyMaterialPrompt(wn, d.day);
+        function done(){
+          dailyBtn.textContent = "已複製！貼到你的 Project →";
+          setTimeout(function(){ dailyBtn.textContent = "📄 只複製今日 5 題（Project 用）"; }, 2500);
+        }
+        if(navigator.clipboard && navigator.clipboard.writeText){
+          navigator.clipboard.writeText(prompt).then(done).catch(function(){
+            window.prompt("自動複製失敗，請手動全選複製：", prompt);
+          });
+        }else{
+          window.prompt("請手動全選複製：", prompt);
+        }
+      });
+      sessRow.appendChild(dailyBtn);
 
       var gptOpen = document.createElement("a");
       gptOpen.className = "btn ghost small";
