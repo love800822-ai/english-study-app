@@ -1494,47 +1494,12 @@
         });
       });
 
-      // live speaking-session button
       var sessRow = panel.querySelector(".session-btn-row");
-      var sessBtn = document.createElement("button");
-      sessBtn.className = "btn";
-      sessBtn.type = "button";
-      var hasSession = state.sessions && state.sessions[sessionKeyFor(wn, d.day)] &&
-                       state.sessions[sessionKeyFor(wn, d.day)].messages.length > 0;
-      sessBtn.textContent = hasSession ? "🎙️ 繼續今天的口說對談" : "🎙️ 和 AI 教練開始口說對談";
-      sessBtn.addEventListener("click", function(){
-        openSession(wn, d.day, d.topic_en || "");
-      });
-      sessRow.appendChild(sessBtn);
-
-      // copy full session prompt for practicing in ChatGPT (voice mode)
-      var gptBtn = document.createElement("button");
-      gptBtn.className = "btn secondary";
-      gptBtn.type = "button";
-      gptBtn.style.marginLeft = "8px";
-      gptBtn.textContent = "📋 複製 Prompt 到 ChatGPT 練";
-      gptBtn.addEventListener("click", function(){
-        var prompt = buildSessionSystemPrompt(wn, d.day) +
-          "\n\nBegin the session now: give me your friendly opener and Question 1.";
-        function done(){
-          gptBtn.textContent = "已複製！去 ChatGPT 貼上 →";
-          setTimeout(function(){ gptBtn.textContent = "📋 複製 Prompt 到 ChatGPT 練"; }, 2500);
-        }
-        if(navigator.clipboard && navigator.clipboard.writeText){
-          navigator.clipboard.writeText(prompt).then(done).catch(function(){
-            window.prompt("自動複製失敗，請手動全選複製：", prompt);
-          });
-        }else{
-          window.prompt("請手動全選複製：", prompt);
-        }
-      });
-      sessRow.appendChild(gptBtn);
 
       // copy only today's material (for ChatGPT Project users - rules live in the Project instructions)
       var dailyBtn = document.createElement("button");
-      dailyBtn.className = "btn secondary";
+      dailyBtn.className = "btn";
       dailyBtn.type = "button";
-      dailyBtn.style.marginLeft = "8px";
       dailyBtn.textContent = "📄 只複製今日 5 題（Project 用）";
       dailyBtn.addEventListener("click", function(){
         var prompt = buildDailyMaterialPrompt(wn, d.day);
@@ -1563,7 +1528,7 @@
 
       var sessHint = document.createElement("div");
       sessHint.className = "hint";
-      sessHint.textContent = "建議練法：按「和 AI 教練開始口說對談」，用 🎤 直接說英文（GPT 辨識＋自然聲音回覆），結束後修正版會自動填入下方欄位。也可以按「複製 Prompt」到 ChatGPT 練。";
+      sessHint.textContent = "練法：按「只複製今日 5 題」→ 到 ChatGPT 的「英文口說教練」Project 開新對話貼上 → 用語音模式練 → 結束說 wrap up，把 5 句修正版複製貼回下方欄位。";
       sessRow.appendChild(sessHint);
 
       // speaking blocks (built with DOM so we can attach handlers cleanly)
