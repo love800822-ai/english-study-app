@@ -62,6 +62,13 @@
   .status.loading{background:var(--grey-light); color:#555;}
 
   .tabs{display:flex; gap:6px; margin-bottom:18px; flex-wrap:wrap;}
+  /* Day1-Day5 往下滑時固定在螢幕最上方 */
+  #dayTabs{
+    position:sticky; top:0; z-index:30;
+    background:#fff;
+    margin-left:-22px; margin-right:-22px; padding:10px 22px;
+    border-bottom:1px solid var(--border);
+  }
   .tab-btn{
     border:1px solid var(--border); background:#fff; border-radius:8px;
     padding:8px 14px; font-size:13px; font-weight:700; cursor:pointer; color:#555;
