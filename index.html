@@ -235,6 +235,10 @@
       <h2 id="resultsHeading">本週教材</h2>
       <select id="weekSelector"></select>
     </div>
+    <div style="margin-bottom:12px;">
+      <button class="btn secondary" id="copyReviewBtn" type="button">📦 複製本週複習包（週末用）</button>
+      <div class="hint">週末複習：按此複製「本週文章＋你 5 天的口說回答」→ 貼到 ChatGPT「英文口說教練」Project，教練會自動帶你跑 20 分鐘複習課。</div>
+    </div>
     <div class="tabs" id="dayTabs"></div>
     <div id="dayPanels"></div>
   </div>
@@ -1120,6 +1124,26 @@
     return out;
   }
 
+  // 本週複習包（週末複習用：文章 + 每天題目與使用者的回答）
+  function buildWeeklyReviewPrompt(wn){
+    var wd = state.weeksData[wn];
+    if(!wd) return "";
+    var out = "Weekly review material:\n\n=== WEEK " + wn + " ===\n\n";
+    if(wd.articleEn) out += "=== ARTICLE (English) ===\n" + wd.articleEn + "\n\n";
+    out += "=== MY ANSWERS THIS WEEK ===\n";
+    (wd.days||[]).forEach(function(d){
+      out += "\n--- Day " + d.day + ": " + (d.topic_en||"") + " ---\n";
+      (d.speaking||[]).forEach(function(q, i){
+        var saved = wd.answers[d.day + "-" + i];
+        var ans = saved && saved.answer ? saved.answer.trim() : "";
+        out += "Q" + (i+1) + ": " + q.en + "\n";
+        out += "My answer: " + (ans || "(not answered)") + "\n";
+      });
+    });
+    out += "\nBegin the weekly review session now.";
+    return out;
+  }
+
   function getSession(wn, day){
     if(!state.sessions) state.sessions = {};
     var key = sessionKeyFor(wn, day);
@@ -1894,6 +1918,23 @@
 
     $("weekSelector").addEventListener("change", function(){ switchWeek(this.value); });
     $("syncBtn").addEventListener("click", function(){ syncFromRemote(true); });
+
+    $("copyReviewBtn").addEventListener("click", function(){
+      var btn = this;
+      var prompt = buildWeeklyReviewPrompt(state.currentWeek);
+      if(!prompt){ alert("目前沒有可複習的教材。"); return; }
+      function done(){
+        btn.textContent = "已複製！貼到你的 Project →";
+        setTimeout(function(){ btn.textContent = "📦 複製本週複習包（週末用）"; }, 2500);
+      }
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(prompt).then(done).catch(function(){
+          window.prompt("自動複製失敗，請手動全選複製：", prompt);
+        });
+      }else{
+        window.prompt("請手動全選複製：", prompt);
+      }
+    });
 
     $("openSyncCardBtn").addEventListener("click", function(){ openSettingsCard("syncCard"); });
     $("openGhCardBtn").addEventListener("click", function(){ openSettingsCard("ghSyncCard"); });
