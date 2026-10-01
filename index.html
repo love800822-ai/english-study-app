@@ -235,10 +235,6 @@
       <h2 id="resultsHeading">本週教材</h2>
       <select id="weekSelector"></select>
     </div>
-    <div style="margin-bottom:12px;">
-      <button class="btn secondary" id="copyReviewBtn" type="button">📦 複製本週複習包（週末用）</button>
-      <div class="hint">週末複習：按此複製「本週文章＋你 5 天的口說回答」→ 貼到 ChatGPT「英文口說教練」Project，教練會自動帶你跑 20 分鐘複習課。</div>
-    </div>
     <div class="tabs" id="dayTabs"></div>
     <div id="dayPanels"></div>
   </div>
@@ -1471,6 +1467,17 @@
       tabsEl.appendChild(b);
     });
 
+    // 週末複習 tab
+    var rb = document.createElement("button");
+    rb.className = "tab-btn" + (activeDay === "R" ? " active" : "");
+    rb.textContent = "📦 複習";
+    rb.type = "button";
+    rb.addEventListener("click", function(){
+      activeDay = "R";
+      renderResults();
+    });
+    tabsEl.appendChild(rb);
+
     // panels
     var panelsEl = $("dayPanels");
     panelsEl.innerHTML = "";
@@ -1606,6 +1613,98 @@
         listEl.appendChild(block);
       });
     });
+
+    // 週末複習頁面
+    (function(){
+      var panel = document.createElement("div");
+      panel.className = "day-panel" + (activeDay === "R" ? " active" : "");
+      panel.innerHTML =
+        '<div class="day-meta">Weekend Review · Week ' + escapeHtml(wn) + '</div>' +
+        '<div class="day-title-en">Weekly Review 週末複習</div>' +
+        '<div class="day-title-cn">重述文章 → 金句快問快答 → 重答挑戰 → 自由對談（約 20 分鐘）</div>' +
+        '<hr class="sep">' +
+        '<div class="sec-title">開始複習</div>' +
+        '<div class="review-btn-row"></div>' +
+        '<hr class="sep">' +
+        '<div class="sec-title">複習成果記錄</div>' +
+        '<div class="review-fields"></div>';
+      panelsEl.appendChild(panel);
+
+      var row = panel.querySelector(".review-btn-row");
+      var copyBtn = document.createElement("button");
+      copyBtn.className = "btn";
+      copyBtn.type = "button";
+      copyBtn.textContent = "📦 複製本週複習包";
+      copyBtn.addEventListener("click", function(){
+        var prompt = buildWeeklyReviewPrompt(wn);
+        if(!prompt){ alert("目前沒有可複習的教材。"); return; }
+        function done(){
+          copyBtn.textContent = "已複製！貼到你的 Project →";
+          setTimeout(function(){ copyBtn.textContent = "📦 複製本週複習包"; }, 2500);
+        }
+        if(navigator.clipboard && navigator.clipboard.writeText){
+          navigator.clipboard.writeText(prompt).then(done).catch(function(){
+            window.prompt("自動複製失敗，請手動全選複製：", prompt);
+          });
+        }else{
+          window.prompt("請手動全選複製：", prompt);
+        }
+      });
+      row.appendChild(copyBtn);
+
+      var gptOpen = document.createElement("a");
+      gptOpen.className = "btn ghost small";
+      gptOpen.style.marginLeft = "8px";
+      gptOpen.href = "https://chatgpt.com/";
+      gptOpen.target = "_blank";
+      gptOpen.rel = "noopener";
+      gptOpen.textContent = "開啟 ChatGPT ↗";
+      row.appendChild(gptOpen);
+
+      var hint = document.createElement("div");
+      hint.className = "hint";
+      hint.textContent = "練法：按「複製本週複習包」（含本週文章＋你 5 天的口說回答）→ 貼到 ChatGPT「英文口說教練」Project 開新對話 → 用語音模式跑 20 分鐘複習課 → 結束後把「Weekly review highlights」貼到下方第一格。";
+      row.appendChild(hint);
+
+      // 記錄欄位（存在 wd.answers 的 "R-0" / "R-1"，跟著既有的跨裝置同步走）
+      var fieldsEl = panel.querySelector(".review-fields");
+      [
+        {key:"R-0", label:"本週複習重點", cn:"貼上教練結尾的 === Weekly review highlights ===（Top 5 表達＋注意事項）", ph:"複習結束後，把教練給的 Weekly review highlights 貼到這裡..."},
+        {key:"R-1", label:"複習筆記", cn:"自由記錄：重答挑戰的進步、自由對談聊了什麼、想補強的地方", ph:"想記下來的複習心得、例句、下週想加強的點..."}
+      ].forEach(function(f){
+        var saved = wd.answers[f.key];
+
+        var block = document.createElement("div");
+        block.className = "q-block";
+
+        var qEn = document.createElement("div");
+        qEn.className = "q-en";
+        qEn.textContent = f.label;
+        block.appendChild(qEn);
+
+        var qCn = document.createElement("div");
+        qCn.className = "q-cn";
+        qCn.textContent = f.cn;
+        block.appendChild(qCn);
+
+        var box = document.createElement("textarea");
+        box.className = "answer-box";
+        box.placeholder = f.ph;
+        box.value = saved ? saved.answer : "";
+        block.appendChild(box);
+
+        box.addEventListener("input", function(){ autoGrowBox(box); });
+        box.addEventListener("blur", function(){
+          var wd2 = ensureWeekData(wn);
+          var existing = wd2.answers[f.key] || {};
+          existing.answer = box.value;
+          wd2.answers[f.key] = existing;
+          saveState();
+        });
+
+        fieldsEl.appendChild(block);
+      });
+    })();
 
     growVisibleAnswerBoxes();
   }
@@ -1919,22 +2018,6 @@
     $("weekSelector").addEventListener("change", function(){ switchWeek(this.value); });
     $("syncBtn").addEventListener("click", function(){ syncFromRemote(true); });
 
-    $("copyReviewBtn").addEventListener("click", function(){
-      var btn = this;
-      var prompt = buildWeeklyReviewPrompt(state.currentWeek);
-      if(!prompt){ alert("目前沒有可複習的教材。"); return; }
-      function done(){
-        btn.textContent = "已複製！貼到你的 Project →";
-        setTimeout(function(){ btn.textContent = "📦 複製本週複習包（週末用）"; }, 2500);
-      }
-      if(navigator.clipboard && navigator.clipboard.writeText){
-        navigator.clipboard.writeText(prompt).then(done).catch(function(){
-          window.prompt("自動複製失敗，請手動全選複製：", prompt);
-        });
-      }else{
-        window.prompt("請手動全選複製：", prompt);
-      }
-    });
 
     $("openSyncCardBtn").addEventListener("click", function(){ openSettingsCard("syncCard"); });
     $("openGhCardBtn").addEventListener("click", function(){ openSettingsCard("ghSyncCard"); });
