@@ -341,6 +341,23 @@
         <input type="text" id="modelInput" value="gpt-4o-mini">
         <div class="hint">可改成 gpt-4o 等其他模型</div>
       </div>
+      <div class="field" style="flex:1;">
+        <label for="ttsVoiceSelect">朗讀聲音</label>
+        <select id="ttsVoiceSelect">
+          <option value="onyx">Onyx（低沉男聲）</option>
+          <option value="alloy">Alloy（中性）</option>
+          <option value="ash">Ash（沉穩男聲）</option>
+          <option value="ballad">Ballad（柔和男聲）</option>
+          <option value="coral">Coral（溫暖女聲）</option>
+          <option value="echo">Echo（清晰男聲）</option>
+          <option value="fable">Fable（英式）</option>
+          <option value="nova">Nova（活潑女聲）</option>
+          <option value="sage">Sage（沉穩女聲）</option>
+          <option value="shimmer">Shimmer（輕快女聲）</option>
+          <option value="verse">Verse（抒情）</option>
+        </select>
+        <div class="hint">GPT 朗讀用的聲音（需有 Key）。換聲音後點任一 🔊 即可試聽。</div>
+      </div>
     </div>
   </div>
 
@@ -521,20 +538,22 @@
       speakTextLocal(text);
       return;
     }
-    if(ttsCache[text]){
-      playTtsUrl(ttsCache[text]);
+    var voice = state.ttsVoice || "onyx";
+    var cacheKey = voice + "|" + text;
+    if(ttsCache[cacheKey]){
+      playTtsUrl(ttsCache[cacheKey]);
       return;
     }
     fetch("https://api.openai.com/v1/audio/speech", {
       method: "POST",
       headers: {"Content-Type":"application/json", "Authorization":"Bearer " + state.apiKey},
-      body: JSON.stringify({model:"gpt-4o-mini-tts", voice:"onyx", input:text})
+      body: JSON.stringify({model:"gpt-4o-mini-tts", voice:voice, input:text})
     }).then(function(res){
       if(!res.ok) throw new Error("TTS HTTP " + res.status);
       return res.blob();
     }).then(function(blob){
       var url = URL.createObjectURL(blob);
-      ttsCache[text] = url;
+      ttsCache[cacheKey] = url;
       playTtsUrl(url);
     }).catch(function(){
       speakTextLocal(text); // GPT 朗讀失敗時退回內建聲音
@@ -1969,6 +1988,7 @@
   function syncFormFromState(){
     $("apiKey").value = state.apiKey || "";
     $("modelInput").value = state.model || "gpt-4o-mini";
+    $("ttsVoiceSelect").value = state.ttsVoice || "onyx";
     $("ghToken").value = state.ghToken || "";
     if(!$("weekStart").value) $("weekStart").value = nextMonday();
   }
@@ -1999,6 +2019,7 @@
 
     $("apiKey").addEventListener("change", function(){ state.apiKey = this.value.trim(); saveState(); });
     $("modelInput").addEventListener("change", function(){ state.model = this.value.trim(); saveState(); });
+    $("ttsVoiceSelect").addEventListener("change", function(){ state.ttsVoice = this.value; saveState(); });
 
     $("toggleGhTokenBtn").addEventListener("click", function(){
       var input = $("ghToken");
