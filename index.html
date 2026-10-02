@@ -517,6 +517,20 @@
     }
     if(window.speechSynthesis) window.speechSynthesis.cancel();
   }
+  // 優先喚起 ChatGPT App（iOS/Android），沒裝 App 時 1.5 秒後退回網頁版
+  function openChatGptApp(){
+    var fallback = setTimeout(function(){
+      window.open("https://chatgpt.com/", "_blank", "noopener");
+    }, 1500);
+    function cancelFallback(){
+      clearTimeout(fallback);
+      document.removeEventListener("visibilitychange", onHide);
+    }
+    function onHide(){ if(document.hidden) cancelFallback(); }
+    document.addEventListener("visibilitychange", onHide);
+    window.location.href = "chatgpt://";
+  }
+
   function ttsSpeed(){
     var s = parseFloat(state.ttsSpeed);
     return (s && s >= 0.5 && s <= 2) ? s : 1;
@@ -1591,13 +1605,12 @@
       });
       sessRow.appendChild(dailyBtn);
 
-      var gptOpen = document.createElement("a");
+      var gptOpen = document.createElement("button");
       gptOpen.className = "btn ghost small";
+      gptOpen.type = "button";
       gptOpen.style.marginLeft = "8px";
-      gptOpen.href = "https://chatgpt.com/";
-      gptOpen.target = "_blank";
-      gptOpen.rel = "noopener";
       gptOpen.textContent = "開啟 ChatGPT ↗";
+      gptOpen.addEventListener("click", openChatGptApp);
       sessRow.appendChild(gptOpen);
 
       var sessHint = document.createElement("div");
@@ -1688,13 +1701,12 @@
       });
       row.appendChild(copyBtn);
 
-      var gptOpen = document.createElement("a");
+      var gptOpen = document.createElement("button");
       gptOpen.className = "btn ghost small";
+      gptOpen.type = "button";
       gptOpen.style.marginLeft = "8px";
-      gptOpen.href = "https://chatgpt.com/";
-      gptOpen.target = "_blank";
-      gptOpen.rel = "noopener";
       gptOpen.textContent = "開啟 ChatGPT ↗";
+      gptOpen.addEventListener("click", openChatGptApp);
       row.appendChild(gptOpen);
 
       var hint = document.createElement("div");
