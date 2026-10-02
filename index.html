@@ -358,6 +358,18 @@
         </select>
         <div class="hint">GPT 朗讀用的聲音（需有 Key）。換聲音後點任一 🔊 即可試聽。</div>
       </div>
+      <div class="field" style="flex:1;">
+        <label for="ttsSpeedSelect">朗讀速度</label>
+        <select id="ttsSpeedSelect">
+          <option value="0.8">0.8x（慢）</option>
+          <option value="0.9">0.9x</option>
+          <option value="1" selected>1.0x（正常）</option>
+          <option value="1.1">1.1x</option>
+          <option value="1.2">1.2x（稍快）</option>
+          <option value="1.5">1.5x（快）</option>
+        </select>
+        <div class="hint">GPT 聲音與內建聲音都適用，立即生效。</div>
+      </div>
     </div>
   </div>
 
@@ -505,9 +517,14 @@
     }
     if(window.speechSynthesis) window.speechSynthesis.cancel();
   }
+  function ttsSpeed(){
+    var s = parseFloat(state.ttsSpeed);
+    return (s && s >= 0.5 && s <= 2) ? s : 1;
+  }
   function playTtsUrl(url){
     stopSpeaking();
     ttsAudio = new Audio(url);
+    ttsAudio.playbackRate = ttsSpeed();
     ttsAudio.play().catch(function(){ /* 使用者未互動前瀏覽器可能擋自動播放，忽略 */ });
   }
   function speakTextLocal(text){
@@ -518,7 +535,7 @@
     window.speechSynthesis.cancel();
     var u = new SpeechSynthesisUtterance(text);
     u.lang = "en-US";
-    u.rate = 1;
+    u.rate = ttsSpeed();
     var voices = window.speechSynthesis.getVoices();
     var pick = null;
     for(var i=0; i<voices.length; i++){
@@ -1989,6 +2006,7 @@
     $("apiKey").value = state.apiKey || "";
     $("modelInput").value = state.model || "gpt-4o-mini";
     $("ttsVoiceSelect").value = state.ttsVoice || "onyx";
+    $("ttsSpeedSelect").value = state.ttsSpeed || "1";
     $("ghToken").value = state.ghToken || "";
     if(!$("weekStart").value) $("weekStart").value = nextMonday();
   }
@@ -2020,6 +2038,11 @@
     $("apiKey").addEventListener("change", function(){ state.apiKey = this.value.trim(); saveState(); });
     $("modelInput").addEventListener("change", function(){ state.model = this.value.trim(); saveState(); });
     $("ttsVoiceSelect").addEventListener("change", function(){ state.ttsVoice = this.value; saveState(); });
+    $("ttsSpeedSelect").addEventListener("change", function(){
+      state.ttsSpeed = this.value;
+      saveState();
+      if(ttsAudio) ttsAudio.playbackRate = ttsSpeed(); // 播放中也立即變速
+    });
 
     $("toggleGhTokenBtn").addEventListener("click", function(){
       var input = $("ghToken");
