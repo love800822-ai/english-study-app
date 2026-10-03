@@ -186,6 +186,16 @@
   .session-btn-row{margin:4px 0 14px; display:flex; flex-wrap:wrap; gap:8px; align-items:center;}
   .session-btn-row .hint{flex-basis:100%;}
 
+  /* ---- 學習打卡 ---- */
+  #checkinCard summary{cursor:pointer; font-weight:700; font-size:16px; display:flex; align-items:center; gap:8px;}
+  #checkinCard summary .tag{font-size:11px; background:var(--red-light); color:var(--red); padding:2px 8px; border-radius:20px; font-weight:600;}
+  .checkin-grid{display:grid; grid-template-columns:repeat(7,1fr); gap:4px; margin-top:12px; max-width:420px;}
+  .checkin-cell{text-align:center; padding:7px 0; border-radius:8px; font-size:13px; color:#999; background:var(--grey-light);}
+  .checkin-cell.head{background:none; font-weight:600; font-size:11px; color:#888; padding:2px 0;}
+  .checkin-cell.blank{background:none;}
+  .checkin-cell.done{background:var(--red); color:#fff; font-weight:700;}
+  .checkin-cell.today{box-shadow:0 0 0 2px var(--red) inset;}
+
   /* ---- settings modal (雲端教材同步 / 跨裝置同步 / GPT 設定 彈窗) ---- */
   .settings-modal{display:none; position:fixed; inset:0; z-index:60; background:rgba(0,0,0,.45);}
   .settings-modal.show{display:flex; align-items:center; justify-content:center; padding:18px;}
@@ -238,6 +248,16 @@
     <div class="tabs" id="dayTabs"></div>
     <div id="dayPanels"></div>
   </div>
+
+  <!-- 學習打卡（可收合） -->
+  <details class="card" id="checkinCard">
+    <summary>📅 學習打卡 <span class="tag" id="checkinCount"></span></summary>
+    <div style="margin-top:14px;">
+      <button class="btn secondary small" id="checkinTodayBtn" type="button">✔ 今日打卡</button>
+      <div class="checkin-grid" id="checkinGrid"></div>
+      <div class="hint">填寫口說回答或複習記錄時會自動打卡；也可以手動按「今日打卡」。打卡紀錄會跨裝置同步。</div>
+    </div>
+  </details>
 
   <div class="card" id="emptyCard">
     <div class="empty-state">還沒有教材 — 請確認網路連線並按「立即重新整理」，或在下方用 AI 直接產生一份。</div>
@@ -600,6 +620,46 @@
     var d = new Date(baseStr + "T00:00:00");
     d.setDate(d.getDate() + days);
     return localDateStr(d);
+  }
+
+  // ---------- 學習打卡 ----------
+  function markCheckinToday(){
+    if(!state.checkins) state.checkins = {};
+    var t = todayStr();
+    if(!state.checkins[t]){
+      state.checkins[t] = true;
+      saveState();
+      renderCheckins();
+    }
+  }
+  function renderCheckins(){
+    var grid = $("checkinGrid");
+    if(!grid) return;
+    var checkins = state.checkins || {};
+    var now = new Date();
+    var y = now.getFullYear(), m = now.getMonth();
+    var monthPrefix = y + "-" + String(m+1).padStart(2,"0");
+    var monthCount = Object.keys(checkins).filter(function(k){ return k.indexOf(monthPrefix) === 0; }).length;
+    $("checkinCount").textContent = (m+1) + " 月已打卡 " + monthCount + " 天";
+
+    var t = todayStr();
+    var html = "";
+    ["日","一","二","三","四","五","六"].forEach(function(w){
+      html += '<div class="checkin-cell head">' + w + '</div>';
+    });
+    var firstDow = new Date(y, m, 1).getDay();
+    for(var i=0; i<firstDow; i++) html += '<div class="checkin-cell blank"></div>';
+    var daysInMonth = new Date(y, m+1, 0).getDate();
+    for(var d=1; d<=daysInMonth; d++){
+      var ds = monthPrefix + "-" + String(d).padStart(2,"0");
+      var cls = "checkin-cell" + (checkins[ds] ? " done" : "") + (ds === t ? " today" : "");
+      html += '<div class="' + cls + '">' + d + '</div>';
+    }
+    grid.innerHTML = html;
+
+    var btn = $("checkinTodayBtn");
+    if(checkins[t]){ btn.textContent = "今天已打卡 ✔"; btn.disabled = true; }
+    else{ btn.textContent = "✔ 今日打卡"; btn.disabled = false; }
   }
 
   // ---------- multi-week data ----------
@@ -1657,7 +1717,19 @@
           existing.answer = answerBox.value;
           wd2.answers[k] = existing;
           saveState();
+          if(answerBox.value.trim()) markCheckinToday();
         });
+
+        var spkAns = document.createElement("button");
+        spkAns.className = "btn ghost small";
+        spkAns.type = "button";
+        spkAns.style.marginTop = "6px";
+        spkAns.textContent = "🔊 朗讀我的回答";
+        spkAns.addEventListener("click", function(){
+          if(!answerBox.value.trim()){ alert("這題還沒有填入回答"); return; }
+          speakText(answerBox.value);
+        });
+        block.appendChild(spkAns);
 
         listEl.appendChild(block);
       });
@@ -1714,20 +1786,31 @@
       hint.textContent = "練法：按「複製本週複習包」（含本週文章＋你 5 天的口說回答）→ 貼到 ChatGPT「英文口說教練」Project 開新對話 → 用語音模式跑 20 分鐘複習課 → 結束後把「Weekly review highlights」貼到下方第一格。";
       row.appendChild(hint);
 
-      // 記錄欄位（存在 wd.answers 的 "R-0" / "R-1"，跟著既有的跨裝置同步走）
+      // 五個複習題（像 Day1-5 一樣列好問句）+ 複習筆記（存在 wd.answers 的 R-0 ~ R-5）
       var fieldsEl = panel.querySelector(".review-fields");
       [
-        {key:"R-0", label:"本週複習重點", cn:"貼上教練結尾的 === Weekly review highlights ===（Top 5 表達＋注意事項）", ph:"複習結束後，把教練給的 Weekly review highlights 貼到這裡..."},
-        {key:"R-1", label:"複習筆記", cn:"自由記錄：重答挑戰的進步、自由對談聊了什麼、想補強的地方", ph:"想記下來的複習心得、例句、下週想加強的點..."}
+        {key:"R-0", num:"Q1.", en:"Retell: summarize this week's article in your own words.", cn:"重述文章：貼上教練修正後的總結版本", ph:"複習結束後，把教練修正過的文章總結貼到這裡..."},
+        {key:"R-1", num:"Q2.", en:"Re-answer challenge 1: your improved answer.", cn:"重答挑戰第 1 題：修正後的回答", ph:"貼上第 1 題重答的修正版..."},
+        {key:"R-2", num:"Q3.", en:"Re-answer challenge 2: your improved answer.", cn:"重答挑戰第 2 題：修正後的回答", ph:"貼上第 2 題重答的修正版..."},
+        {key:"R-3", num:"Q4.", en:"Re-answer challenge 3: your improved answer.", cn:"重答挑戰第 3 題：修正後的回答", ph:"貼上第 3 題重答的修正版..."},
+        {key:"R-4", num:"Q5.", en:"Free talk: your best sentences from the conversation.", cn:"自由對談：你講得最好的幾句（修正版）＋本週 Top 5 表達", ph:"貼上自由對談的精華句和教練給的 Top 5 表達..."},
+        {key:"R-5", num:"", en:"複習筆記", cn:"自由記錄：這次複習的進步、還想補強的地方", ph:"想記下來的複習心得、下週想加強的點..."}
       ].forEach(function(f){
         var saved = wd.answers[f.key];
 
         var block = document.createElement("div");
         block.className = "q-block";
 
+        if(f.num){
+          var num = document.createElement("div");
+          num.className = "q-num";
+          num.textContent = f.num;
+          block.appendChild(num);
+        }
+
         var qEn = document.createElement("div");
         qEn.className = "q-en";
-        qEn.textContent = f.label;
+        qEn.textContent = f.en;
         block.appendChild(qEn);
 
         var qCn = document.createElement("div");
@@ -1748,7 +1831,21 @@
           existing.answer = box.value;
           wd2.answers[f.key] = existing;
           saveState();
+          if(box.value.trim()) markCheckinToday();
         });
+
+        if(f.key !== "R-5"){
+          var spk = document.createElement("button");
+          spk.className = "btn ghost small";
+          spk.type = "button";
+          spk.style.marginTop = "6px";
+          spk.textContent = "🔊 朗讀這段";
+          spk.addEventListener("click", function(){
+            if(!box.value.trim()){ alert("這格還沒有內容"); return; }
+            speakText(box.value);
+          });
+          block.appendChild(spk);
+        }
 
         fieldsEl.appendChild(block);
       });
@@ -1850,11 +1947,12 @@
       updatedAt: state.progressUpdatedAt || "",
       answers: answers,
       vocabBank: state.vocabBank || [],
-      reviewLog: state.reviewLog || {date:"", served:[]}
+      reviewLog: state.reviewLog || {date:"", served:[]},
+      checkins: state.checkins || {}
     };
   }
   function ghContentKey(p){
-    return JSON.stringify({a: p.answers || {}, v: p.vocabBank || [], r: p.reviewLog || null});
+    return JSON.stringify({a: p.answers || {}, v: p.vocabBank || [], r: p.reviewLog || null, c: p.checkins || {}});
   }
   // 合併雲端進度（不是整份覆蓋）：兩邊都有的以雲端為準，只存在本機的資料會保留，不會被清空
   function applyProgress(p){
@@ -1899,6 +1997,10 @@
           });
         });
       }
+      if(p.checkins){
+        if(!state.checkins) state.checkins = {};
+        Object.keys(p.checkins).forEach(function(k){ state.checkins[k] = true; }); // 聯集合併
+      }
       state.progressUpdatedAt = p.updatedAt || "";
       saveState();
     }finally{
@@ -1906,6 +2008,7 @@
     }
     renderResults();
     renderVocabSummary();
+    renderCheckins();
   }
 
   function ghScheduleSync(){
@@ -2034,7 +2137,10 @@
     renderResults();
     renderVocabSummary();
     renderSyncInfo();
+    renderCheckins();
     syncFromRemote(false);
+
+    $("checkinTodayBtn").addEventListener("click", markCheckinToday);
 
     $("toggleKeyBtn").addEventListener("click", function(){
       var input = $("apiKey");
