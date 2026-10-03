@@ -82,6 +82,18 @@
   .day-title-cn{font-size:13.5px; color:var(--grey); margin-bottom:14px;}
   hr.sep{border:none; border-top:1px solid var(--border); margin:16px 0;}
   .sec-title{font-size:14.5px; font-weight:700; margin:18px 0 10px; color:#333;}
+  /* 每日教材的可折疊段落 */
+  details.sec{border-top:1px solid var(--border); margin-top:10px;}
+  details.sec > summary{
+    list-style:none; cursor:pointer;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:12px 0;
+  }
+  details.sec > summary::-webkit-details-marker{display:none;}
+  details.sec > summary .sec-title{margin:0;}
+  details.sec > summary .sec-arrow{color:#aaa; font-size:12px; transition:transform .2s; flex-shrink:0;}
+  details.sec[open] > summary .sec-arrow{transform:rotate(90deg);}
+  details.sec > .sec-body{padding-bottom:14px;}
 
   .sentence{margin-bottom:12px;}
   .sentence .txt{font-size:14px; font-weight:700;}
@@ -1600,9 +1612,8 @@
       html += '<div class="day-meta">Day ' + d.day + ' of 5 · Week ' + escapeHtml(wn) + (dateStr ? " · " + dateStr : "") + '</div>';
       html += '<div class="day-title-en">' + escapeHtml(d.topic_en) + '</div>';
       html += '<div class="day-title-cn">' + escapeHtml(d.topic_cn) + '</div>';
-      html += '<hr class="sep">';
 
-      html += '<div class="sec-title">今日句子 Key Sentences</div>';
+      html += '<details class="sec" open><summary><span class="sec-title">今日句子 Key Sentences</span><span class="sec-arrow">▶</span></summary><div class="sec-body">';
       (d.sentences||[]).forEach(function(s, i){
         html += '<div class="sentence"><div class="txt"><span>' + (i+1) + '. ' + escapeHtml(s.text) + '</span>' +
                 '<button class="speak-btn" type="button" data-stype="sent" data-idx="' + i + '" title="唸出這句" aria-label="唸出這句">🔊</button></div>';
@@ -1612,8 +1623,8 @@
         html += '</div>';
       });
 
-      html += '<hr class="sep">';
-      html += '<div class="sec-title">今日單字 Vocabulary</div>';
+      html += '</div></details>';
+      html += '<details class="sec"><summary><span class="sec-title">今日單字 Vocabulary</span><span class="sec-arrow">▶</span></summary><div class="sec-body">';
       html += '<div class="table-scroll"><table class="vocab">';
       (d.vocab||[]).forEach(function(v, vi){
         html += '<tr><td class="word">' + escapeHtml(v.word) +
@@ -1621,11 +1632,12 @@
                 '</td><td class="pos">' + escapeHtml(v.pos) + '</td><td>' + escapeHtml(v.def) + '</td></tr>';
       });
       html += '</table></div>';
+      html += '</div></details>';
 
-      html += '<hr class="sep">';
-      html += '<div class="sec-title">口說練習 Speaking Practice</div>';
+      html += '<details class="sec"><summary><span class="sec-title">口說練習 Speaking Practice</span><span class="sec-arrow">▶</span></summary><div class="sec-body">';
       html += '<div class="session-btn-row" data-day="' + d.day + '"></div>';
       html += '<div class="speaking-list" data-day="' + d.day + '"></div>';
+      html += '</div></details>';
 
       panel.innerHTML = html;
       panelsEl.appendChild(panel);
@@ -1743,12 +1755,12 @@
         '<div class="day-meta">Weekend Review · Week ' + escapeHtml(wn) + '</div>' +
         '<div class="day-title-en">Weekly Review 週末複習</div>' +
         '<div class="day-title-cn">重述文章 → 金句快問快答 → 重答挑戰 → 自由對談（約 20 分鐘）</div>' +
-        '<hr class="sep">' +
-        '<div class="sec-title">開始複習</div>' +
+        '<details class="sec" open><summary><span class="sec-title">開始複習</span><span class="sec-arrow">▶</span></summary><div class="sec-body">' +
         '<div class="review-btn-row"></div>' +
-        '<hr class="sep">' +
-        '<div class="sec-title">複習成果記錄</div>' +
-        '<div class="review-fields"></div>';
+        '</div></details>' +
+        '<details class="sec"><summary><span class="sec-title">複習成果記錄</span><span class="sec-arrow">▶</span></summary><div class="sec-body">' +
+        '<div class="review-fields"></div>' +
+        '</div></details>';
       panelsEl.appendChild(panel);
 
       var row = panel.querySelector(".review-btn-row");
@@ -1850,6 +1862,17 @@
         fieldsEl.appendChild(block);
       });
     })();
+
+    // 折疊區塊展開時，重新計算回答框高度（收合中的 textarea 量不到高度）
+    Array.prototype.forEach.call(panelsEl.querySelectorAll("details.sec"), function(det){
+      det.addEventListener("toggle", function(){
+        if(det.open){
+          Array.prototype.forEach.call(det.querySelectorAll(".answer-box"), function(box){
+            if(box.value) autoGrowBox(box);
+          });
+        }
+      });
+    });
 
     growVisibleAnswerBoxes();
   }
