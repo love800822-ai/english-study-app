@@ -1251,6 +1251,10 @@
     out += "=== MY ANSWERS THIS WEEK ===\n";
     (wd.days||[]).forEach(function(d){
       out += "\n--- Day " + d.day + ": " + (d.topic_en||"") + " ---\n";
+      var sents = (d.sentences||[]).map(function(s){ return s.text; }).filter(Boolean);
+      if(sents.length) out += "Key sentences: " + sents.join(" / ") + "\n";
+      var words = (d.vocab||[]).map(function(v){ return v.word; }).filter(Boolean);
+      if(words.length) out += "Vocabulary: " + words.join(", ") + "\n";
       (d.speaking||[]).forEach(function(q, i){
         var saved = wd.answers[d.day + "-" + i];
         var ans = saved && saved.answer ? saved.answer.trim() : "";
@@ -1754,7 +1758,7 @@
       panel.innerHTML =
         '<div class="day-meta">Weekend Review · Week ' + escapeHtml(wn) + '</div>' +
         '<div class="day-title-en">Weekly Review 週末複習</div>' +
-        '<div class="day-title-cn">重述文章 → 金句快問快答 → 重答挑戰 → 自由對談（約 20 分鐘）</div>' +
+        '<div class="day-title-cn">聊天式複習：教練延伸本週你的回答往下聊（約 10–15 分鐘）</div>' +
         '<details class="sec" open><summary><span class="sec-title">開始複習</span><span class="sec-arrow">▶</span></summary><div class="sec-body">' +
         '<div class="review-btn-row"></div>' +
         '</div></details>' +
@@ -1795,17 +1799,17 @@
 
       var hint = document.createElement("div");
       hint.className = "hint";
-      hint.textContent = "練法：按「複製本週複習包」（含本週文章＋你 5 天的口說回答）→ 貼到 ChatGPT「英文口說教練」Project 開新對話 → 用語音模式跑 20 分鐘複習課 → 結束後教練會給「Weekly review recap」，把 Q1–Q5 逐格貼到下方。";
+      hint.textContent = "練法：按「複製本週複習包」（含本週文章、句子單字＋你 5 天的口說回答）→ 貼到 ChatGPT「英文口說教練」Project 開新對話 → 用語音模式聊 10–15 分鐘（教練會挑你的回答延伸追問）→ 結束後教練會給「Weekly review recap」，把 Q1–Q5 逐格貼到下方。";
       row.appendChild(hint);
 
       // 五個複習題（像 Day1-5 一樣列好問句）+ 複習筆記（存在 wd.answers 的 R-0 ~ R-5）
       var fieldsEl = panel.querySelector(".review-fields");
       [
-        {key:"R-0", num:"Q1.", en:"Retell: summarize this week's article in your own words.", cn:"重述文章：貼上教練修正後的總結版本", ph:"複習結束後，把教練修正過的文章總結貼到這裡..."},
-        {key:"R-1", num:"Q2.", en:"Re-answer challenge 1: your improved answer.", cn:"重答挑戰第 1 題：修正後的回答", ph:"貼上第 1 題重答的修正版..."},
-        {key:"R-2", num:"Q3.", en:"Re-answer challenge 2: your improved answer.", cn:"重答挑戰第 2 題：修正後的回答", ph:"貼上第 2 題重答的修正版..."},
-        {key:"R-3", num:"Q4.", en:"Re-answer challenge 3: your improved answer.", cn:"重答挑戰第 3 題：修正後的回答", ph:"貼上第 3 題重答的修正版..."},
-        {key:"R-4", num:"Q5.", en:"Free talk: your best sentences from the conversation.", cn:"自由對談：你講得最好的幾句（修正版）＋本週 Top 5 表達", ph:"貼上自由對談的精華句和教練給的 Top 5 表達..."},
+        {key:"R-0", num:"Q1.", en:"Deep-dive topic 1: my polished answer.", cn:"深聊題 1：修正後更口語的版本", ph:"複習結束後，貼上教練整理的第 1 題口語化修正版..."},
+        {key:"R-1", num:"Q2.", en:"Deep-dive topic 2: my polished answer.", cn:"深聊題 2：修正後更口語的版本", ph:"貼上第 2 題的口語化修正版..."},
+        {key:"R-2", num:"Q3.", en:"Deep-dive topic 3: my polished answer.", cn:"深聊題 3：修正後更口語的版本", ph:"貼上第 3 題的口語化修正版..."},
+        {key:"R-3", num:"Q4.", en:"Deep-dive topic 4: my polished answer.", cn:"深聊題 4：修正後更口語的版本", ph:"貼上第 4 題的口語化修正版（若只聊了 3 題可留空）..."},
+        {key:"R-4", num:"Q5.", en:"Top 5 expressions this week.", cn:"本週 Top 5 表達（全部來自你本週真的講過的內容）", ph:"貼上教練整理的本週 Top 5 表達..."},
         {key:"R-5", num:"", en:"複習筆記", cn:"自由記錄：這次複習的進步、還想補強的地方", ph:"想記下來的複習心得、下週想加強的點..."}
       ].forEach(function(f){
         var saved = wd.answers[f.key];
