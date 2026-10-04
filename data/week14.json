@@ -1,0 +1,662 @@
+{
+  "weekN": "14",
+  "weekStart": "2026-10-05",
+  "articleEn": "How AI Is Changing the Future of Work",
+  "articleCn": "人工智慧如何改變未來工作方式",
+  "days": [
+    {
+      "day": 1,
+      "topic_en": "The Canary in the Coal Mine — Tech Jobs Signal AI's Impact",
+      "topic_cn": "礦坑裡的金絲雀 — 科技業職缺透露 AI 衝擊",
+      "sentences": [
+        {
+          "text": "You heard what Mike McKee was just saying. He broke down the numbers. What was your take from that report?",
+          "keywords": [
+            {
+              "kw": "broke down the numbers",
+              "def": "explained the figures in detail"
+            },
+            {
+              "kw": "take",
+              "def": "personal opinion or interpretation"
+            }
+          ]
+        },
+        {
+          "text": "I was really focusing, like everybody was, on the tech sector in particular, looking for some clues about how AI would be affecting the broader labor market.",
+          "keywords": [
+            {
+              "kw": "clues",
+              "def": "pieces of evidence that help you understand something"
+            },
+            {
+              "kw": "broader labor market",
+              "def": "the overall job market, not just one sector"
+            }
+          ]
+        },
+        {
+          "text": "I like to think of this as the canary in the coal mine, if you will, because they're such early adopters.",
+          "keywords": [
+            {
+              "kw": "canary in the coal mine",
+              "def": "an early warning sign of danger to come"
+            },
+            {
+              "kw": "early adopters",
+              "def": "people or companies that start using new technology first"
+            }
+          ]
+        },
+        {
+          "text": "And certainly seeing information employment decline by 22,000 in August, following the losses that had occurred over the prior year, really is definitely eye-opening.",
+          "keywords": [
+            {
+              "kw": "eye-opening",
+              "def": "surprising and revealing"
+            },
+            {
+              "kw": "the prior year",
+              "def": "the year before"
+            }
+          ]
+        },
+        {
+          "text": "So, you know, those job losses were occurring, as he said, in computing infrastructure, data processing, web hosting, related services.",
+          "keywords": [
+            {
+              "kw": "computing infrastructure",
+              "def": "the hardware and systems that support computer services"
+            },
+            {
+              "kw": "web hosting",
+              "def": "the service of storing websites on servers"
+            }
+          ]
+        },
+        {
+          "text": "And this is where we would expect to see the swiftest and largest impacts on the labor market when we're thinking about AI.",
+          "keywords": [
+            {
+              "kw": "swiftest",
+              "def": "fastest"
+            },
+            {
+              "kw": "impacts on",
+              "def": "effects or influences upon"
+            }
+          ]
+        }
+      ],
+      "vocab": [
+        {
+          "word": "canary in the coal mine",
+          "pos": "phrase",
+          "def": "an early warning sign that danger or trouble is coming"
+        },
+        {
+          "word": "early adopter",
+          "pos": "n.",
+          "def": "a person or company that starts using new technology first"
+        },
+        {
+          "word": "eye-opening",
+          "pos": "adj.",
+          "def": "surprising and making you aware of something new"
+        },
+        {
+          "word": "break down",
+          "pos": "phrase",
+          "def": "to explain something in detail, piece by piece"
+        },
+        {
+          "word": "labor market",
+          "pos": "n.",
+          "def": "the supply of and demand for jobs and workers"
+        }
+      ],
+      "speaking": [
+        {
+          "en": "Do you think the tech sector is a good \"canary in the coal mine\" for AI's impact on jobs? Why?",
+          "cn": "你認為科技業是觀察 AI 衝擊就業的好「金絲雀」嗎？為什麼？"
+        },
+        {
+          "en": "Has AI started to affect your industry or your own job yet? How?",
+          "cn": "AI 開始影響你的產業或你的工作了嗎？怎麼影響？"
+        },
+        {
+          "en": "Were the job-loss numbers in this report surprising to you?",
+          "cn": "這份報告的失業數字讓你意外嗎？"
+        },
+        {
+          "en": "Would you call yourself an early adopter of new technology? Give an example.",
+          "cn": "你會說自己是新科技的早期採用者嗎？舉個例子。"
+        },
+        {
+          "en": "What clues do you look for to understand where the job market is heading?",
+          "cn": "你會觀察哪些線索來判斷就業市場的走向？"
+        }
+      ]
+    },
+    {
+      "day": 2,
+      "topic_en": "Cautious Employers — Headwinds and Slower Hiring",
+      "topic_cn": "謹慎的雇主 — 經濟逆風與放緩的招聘",
+      "sentences": [
+        {
+          "text": "Is there a bigger trend that you're seeing, Alicia, from this report?",
+          "keywords": [
+            {
+              "kw": "bigger trend",
+              "def": "a larger pattern beyond individual numbers"
+            }
+          ]
+        },
+        {
+          "text": "Yeah, some of the other things I was worried about were the number of long-term unemployed in particular.",
+          "keywords": [
+            {
+              "kw": "long-term unemployed",
+              "def": "people who have been without work for an extended period"
+            }
+          ]
+        },
+        {
+          "text": "So, those are people who have been jobless for 27 weeks or more.",
+          "keywords": [
+            {
+              "kw": "jobless",
+              "def": "without a job; unemployed"
+            }
+          ]
+        },
+        {
+          "text": "That really didn't change much in August, but they account for about 27% of the unemployed now.",
+          "keywords": [
+            {
+              "kw": "account for",
+              "def": "to make up or represent a portion of something"
+            }
+          ]
+        },
+        {
+          "text": "So, I do worry on the demand side that firms are continuing to be more cautious in their hiring due to macroeconomic headwinds like inflation, interest rates, general uncertainty related to other disruptions to supply chains like transport routes, oil and diesel prices, tariffs.",
+          "keywords": [
+            {
+              "kw": "demand side",
+              "def": "the employers' side of the job market, who hire workers"
+            },
+            {
+              "kw": "macroeconomic headwinds",
+              "def": "large-scale economic forces that slow things down"
+            },
+            {
+              "kw": "tariffs",
+              "def": "taxes placed on imported goods"
+            }
+          ]
+        },
+        {
+          "text": "They're also looking to AI tools to make their existing workforce more efficient, which slows down new hiring even if we don't see huge layoffs.",
+          "keywords": [
+            {
+              "kw": "existing workforce",
+              "def": "the employees a company already has"
+            },
+            {
+              "kw": "layoffs",
+              "def": "the dismissal of employees, usually to cut costs"
+            }
+          ]
+        }
+      ],
+      "vocab": [
+        {
+          "word": "long-term unemployed",
+          "pos": "phrase",
+          "def": "people jobless for an extended period, e.g. 27+ weeks"
+        },
+        {
+          "word": "account for",
+          "pos": "phrase",
+          "def": "to make up or represent a part of a total"
+        },
+        {
+          "word": "headwind",
+          "pos": "n.",
+          "def": "a force or condition that slows progress"
+        },
+        {
+          "word": "cautious",
+          "pos": "adj.",
+          "def": "careful to avoid risk"
+        },
+        {
+          "word": "layoff",
+          "pos": "n.",
+          "def": "the dismissal of employees, usually for business reasons"
+        }
+      ],
+      "speaking": [
+        {
+          "en": "Why do you think companies become more cautious in hiring during uncertain times?",
+          "cn": "你認為為什麼公司在不確定時期招聘會更謹慎？"
+        },
+        {
+          "en": "Have you seen companies around you use AI to avoid hiring new people?",
+          "cn": "你有看過身邊的公司用 AI 來減少新人招聘嗎？"
+        },
+        {
+          "en": "Which headwind — inflation, interest rates, or tariffs — affects your life the most?",
+          "cn": "通膨、利率、關稅這些逆風，哪個對你的生活影響最大？"
+        },
+        {
+          "en": "What would you do if you were jobless for more than 27 weeks?",
+          "cn": "如果你失業超過 27 週，你會怎麼辦？"
+        },
+        {
+          "en": "Is slower hiring better or worse than big layoffs, in your opinion? Why?",
+          "cn": "你認為放慢招聘比大規模裁員好還是糟？為什麼？"
+        }
+      ]
+    },
+    {
+      "day": 3,
+      "topic_en": "The Eroding First Rung — Entry-Level Jobs Under Pressure",
+      "topic_cn": "消失的第一階 — 新人職缺面臨的壓力",
+      "sentences": [
+        {
+          "text": "On the supply side, that makes me worry a little that people who have lost their jobs might be no longer qualified for the jobs they had due to changes in skill requirements related to AI or other trends.",
+          "keywords": [
+            {
+              "kw": "supply side",
+              "def": "the workers' side of the job market, who offer labor"
+            },
+            {
+              "kw": "no longer qualified",
+              "def": "not having the required skills anymore"
+            },
+            {
+              "kw": "skill requirements",
+              "def": "the abilities a job demands"
+            }
+          ]
+        },
+        {
+          "text": "So, I worry that maybe that first rung on the job ladder, in particular for entry-level workers who are just entering the labor force, is eroding, particularly in some industries where we see AI adoption has been more rapid.",
+          "keywords": [
+            {
+              "kw": "first rung on the job ladder",
+              "def": "the lowest starting position in a career"
+            },
+            {
+              "kw": "entry-level",
+              "def": "suitable for people just starting their careers"
+            },
+            {
+              "kw": "eroding",
+              "def": "gradually being worn away or destroyed"
+            }
+          ]
+        },
+        {
+          "text": "I have a kid in college. I have another kid who's finished college. You have a child in college.",
+          "keywords": [
+            {
+              "kw": "in college",
+              "def": "currently studying at university"
+            }
+          ]
+        },
+        {
+          "text": "So what are they expecting? They're getting into this job market frustrated, trying to look for work.",
+          "keywords": [
+            {
+              "kw": "frustrated",
+              "def": "feeling upset because of being unable to achieve something"
+            }
+          ]
+        },
+        {
+          "text": "What kind of skills, let's start here. What kind of skills are employers looking for now from these kids coming out of college?",
+          "keywords": [
+            {
+              "kw": "coming out of college",
+              "def": "recently graduating from university"
+            }
+          ]
+        },
+        {
+          "text": "Yeah, Alicia, I'm glad you went there, cuz I know we were speaking in the break before this.",
+          "keywords": [
+            {
+              "kw": "went there",
+              "def": "raised or mentioned that topic"
+            },
+            {
+              "kw": "in the break",
+              "def": "during the pause between segments"
+            }
+          ]
+        }
+      ],
+      "vocab": [
+        {
+          "word": "first rung on the ladder",
+          "pos": "phrase",
+          "def": "the lowest starting step in a career or system"
+        },
+        {
+          "word": "entry-level",
+          "pos": "adj.",
+          "def": "at the lowest level of a career, for beginners"
+        },
+        {
+          "word": "erode",
+          "pos": "v.",
+          "def": "to gradually wear away or weaken"
+        },
+        {
+          "word": "qualified",
+          "pos": "adj.",
+          "def": "having the skills or credentials needed for a job"
+        },
+        {
+          "word": "labor force",
+          "pos": "n.",
+          "def": "all the people available to work in an economy"
+        }
+      ],
+      "speaking": [
+        {
+          "en": "What was your own \"first rung on the job ladder\"? Tell me about your first job.",
+          "cn": "你職涯的「第一階」是什麼？說說你的第一份工作。"
+        },
+        {
+          "en": "Do you think it's harder for new graduates today than when you started working? Why?",
+          "cn": "你覺得現在的新鮮人比你當年更難找工作嗎？為什麼？"
+        },
+        {
+          "en": "If AI changed your job's skill requirements, how would you adapt?",
+          "cn": "如果 AI 改變了你工作的技能要求，你會如何調整？"
+        },
+        {
+          "en": "What advice would you give a college student entering today's job market?",
+          "cn": "你會給正要進入職場的大學生什麼建議？"
+        },
+        {
+          "en": "Have your own skills ever felt outdated? What did you do about it?",
+          "cn": "你曾覺得自己的技能過時嗎？你怎麼處理？"
+        }
+      ]
+    },
+    {
+      "day": 4,
+      "topic_en": "Raising the Bar — What the ChatGPT Era Demands of Juniors",
+      "topic_cn": "墊高的門檻 — ChatGPT 時代對新人的要求",
+      "sentences": [
+        {
+          "text": "We actually did a study, looking in particular at what's happening to the entry-level labor market for junior software engineers, cuz that's where, at least for Northeastern, we're seeing our graduates having the most difficulty in the labor market.",
+          "keywords": [
+            {
+              "kw": "junior",
+              "def": "at a lower or beginning level in a profession"
+            },
+            {
+              "kw": "having the most difficulty",
+              "def": "struggling the most"
+            }
+          ]
+        },
+        {
+          "text": "And when we looked at the online job postings, we found that right around the time when ChatGPT was publicly released, that a lot of firms changed their entry-level hiring standards in terms of both quantity and quality.",
+          "keywords": [
+            {
+              "kw": "job postings",
+              "def": "public advertisements for open positions"
+            },
+            {
+              "kw": "hiring standards",
+              "def": "the criteria used to decide who to employ"
+            },
+            {
+              "kw": "in terms of",
+              "def": "with regard to; concerning"
+            }
+          ]
+        },
+        {
+          "text": "So, we find that there's about a 15% relative decline in junior versus senior software developer vacancies.",
+          "keywords": [
+            {
+              "kw": "relative decline",
+              "def": "a decrease compared with something else"
+            },
+            {
+              "kw": "vacancies",
+              "def": "unfilled job positions"
+            }
+          ]
+        },
+        {
+          "text": "So, those junior vacancies are really the ones that the college grads are going for.",
+          "keywords": [
+            {
+              "kw": "going for",
+              "def": "trying to get or applying for"
+            }
+          ]
+        },
+        {
+          "text": "So, it's not just a STEM thing, it's really an AI thing.",
+          "keywords": [
+            {
+              "kw": "STEM",
+              "def": "science, technology, engineering, and mathematics"
+            }
+          ]
+        },
+        {
+          "text": "And we're also finding that these employers are asking for more years of experience in these junior roles, and they're asking for higher levels of skills, things like problem-solving, communication, attention to detail, lots of judgment, things that are really raising the bar for what counts as a qualified junior hire.",
+          "keywords": [
+            {
+              "kw": "attention to detail",
+              "def": "the ability to notice and handle small things carefully"
+            },
+            {
+              "kw": "raising the bar",
+              "def": "setting a higher standard"
+            },
+            {
+              "kw": "counts as",
+              "def": "is considered or accepted as"
+            }
+          ]
+        }
+      ],
+      "vocab": [
+        {
+          "word": "vacancy",
+          "pos": "n.",
+          "def": "an unfilled job position"
+        },
+        {
+          "word": "raise the bar",
+          "pos": "phrase",
+          "def": "to set a higher standard than before"
+        },
+        {
+          "word": "attention to detail",
+          "pos": "phrase",
+          "def": "the ability to notice and handle small things carefully"
+        },
+        {
+          "word": "STEM",
+          "pos": "n.",
+          "def": "science, technology, engineering, and mathematics fields"
+        },
+        {
+          "word": "judgment",
+          "pos": "n.",
+          "def": "the ability to make sensible decisions"
+        }
+      ],
+      "speaking": [
+        {
+          "en": "Why do you think junior job openings dropped after ChatGPT was released?",
+          "cn": "你認為為什麼 ChatGPT 發布後，初階職缺反而減少了？"
+        },
+        {
+          "en": "Is it fair to ask for more experience in a junior role? Why or why not?",
+          "cn": "初階職位卻要求更多經驗，這公平嗎？為什麼？"
+        },
+        {
+          "en": "Which skill — problem-solving, communication, or attention to detail — is your strongest? Give an example.",
+          "cn": "解決問題、溝通、注重細節，哪項是你最強的？舉個例子。"
+        },
+        {
+          "en": "Do you use any AI tools at work? How do they change which skills matter?",
+          "cn": "你工作上有用 AI 工具嗎？它們如何改變重要技能的定義？"
+        },
+        {
+          "en": "If you were an employer, what would you look for in a junior hire today?",
+          "cn": "如果你是雇主，現在你會看重新人哪些特質？"
+        }
+      ]
+    },
+    {
+      "day": 5,
+      "topic_en": "Human-Centric Hiring — Judgment in the Age of AI Resumes",
+      "topic_cn": "回歸人本 — AI 履歷時代的判斷力",
+      "sentences": [
+        {
+          "text": "Now, on the flip side, companies are dealing with resumes that are maybe written by AI. So, on the flip side, how is the interview process? How is that changing?",
+          "keywords": [
+            {
+              "kw": "on the flip side",
+              "def": "looking at the opposite aspect of the situation"
+            },
+            {
+              "kw": "interview process",
+              "def": "the steps used to evaluate job candidates"
+            }
+          ]
+        },
+        {
+          "text": "When you get folks being able to write job resumes that exactly correspond to what people are looking for in their job ad because it's so easy to rewrite it with AI, they're just getting peppered with hundreds and hundreds of resumes.",
+          "keywords": [
+            {
+              "kw": "correspond to",
+              "def": "to match or be consistent with"
+            },
+            {
+              "kw": "peppered with",
+              "def": "hit with a large number of things"
+            }
+          ]
+        },
+        {
+          "text": "And so that's why you do see firms relying more on word of mouth, referrals, networking, uh, oddly enough, a lot of the in-person kinds of ways that folks are used to in terms of getting jobs.",
+          "keywords": [
+            {
+              "kw": "word of mouth",
+              "def": "information spread by people talking to each other"
+            },
+            {
+              "kw": "referrals",
+              "def": "recommendations of a person for a job"
+            },
+            {
+              "kw": "oddly enough",
+              "def": "surprisingly; although it seems strange"
+            }
+          ]
+        },
+        {
+          "text": "And in particular, they're looking for something that's more human-centric, right?",
+          "keywords": [
+            {
+              "kw": "human-centric",
+              "def": "focused on human abilities and needs"
+            }
+          ]
+        },
+        {
+          "text": "So, do you have the judgment and experience to use AI in a way that's both efficient to the context and the job that you have, but is also equitable and ethical, right?",
+          "keywords": [
+            {
+              "kw": "equitable",
+              "def": "fair and impartial"
+            },
+            {
+              "kw": "ethical",
+              "def": "morally right and responsible"
+            }
+          ]
+        },
+        {
+          "text": "Do you have the judgment to know when you should and should not be using it? Cuz, you know, one of the things we're seeing also, people are using it to write job reviews, right, for their subordinates and things like that. That's probably not the best use of AI.",
+          "keywords": [
+            {
+              "kw": "subordinates",
+              "def": "people who work under someone's management"
+            },
+            {
+              "kw": "the best use of",
+              "def": "the most appropriate way to apply something"
+            }
+          ]
+        }
+      ],
+      "vocab": [
+        {
+          "word": "word of mouth",
+          "pos": "phrase",
+          "def": "information passed along by people talking to each other"
+        },
+        {
+          "word": "referral",
+          "pos": "n.",
+          "def": "a recommendation of a person for a job or service"
+        },
+        {
+          "word": "human-centric",
+          "pos": "adj.",
+          "def": "designed around human abilities, needs, and values"
+        },
+        {
+          "word": "equitable",
+          "pos": "adj.",
+          "def": "fair and treating everyone equally"
+        },
+        {
+          "word": "subordinate",
+          "pos": "n.",
+          "def": "a person who works under someone of higher rank"
+        }
+      ],
+      "speaking": [
+        {
+          "en": "Would you use AI to write or polish your resume? Why or why not?",
+          "cn": "你會用 AI 寫或潤飾履歷嗎？為什麼？"
+        },
+        {
+          "en": "Have you ever gotten a job or opportunity through word of mouth or networking?",
+          "cn": "你曾透過口碑或人脈得到工作或機會嗎？"
+        },
+        {
+          "en": "Which jobs or tasks do you think should stay human-centric?",
+          "cn": "你認為哪些工作或任務應該保持「以人為本」？"
+        },
+        {
+          "en": "When is it NOT appropriate to use AI at work, in your opinion?",
+          "cn": "你認為工作中什麼時候「不」適合使用 AI？"
+        },
+        {
+          "en": "After studying this article all week, what is your biggest takeaway about how AI is changing the future of work?",
+          "cn": "學完這篇文章一整週，你對 AI 如何改變未來工作方式，最大的收穫是什麼？"
+        }
+      ]
+    }
+  ]
+}
