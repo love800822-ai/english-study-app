@@ -1753,6 +1753,54 @@
 
         listEl.appendChild(block);
       });
+
+      // 重點句型欄（存 wd.answers["day-sp"]，隨內容自動長高）
+      (function(){
+        var spKey = d.day + "-sp";
+        var spSaved = wd.answers[spKey];
+
+        var spBlock = document.createElement("div");
+        spBlock.className = "q-block";
+
+        var spTitle = document.createElement("div");
+        spTitle.className = "q-en";
+        spTitle.textContent = "重點句型 Key Patterns";
+        spBlock.appendChild(spTitle);
+
+        var spCn = document.createElement("div");
+        spCn.className = "q-cn";
+        spCn.textContent = "記下今天練習中值得重用的句型或表達";
+        spBlock.appendChild(spCn);
+
+        var spBox = document.createElement("textarea");
+        spBox.className = "answer-box";
+        spBox.placeholder = "例如：I can relate to... / It's eye-opening that... 把教練提到的好句型貼過來...";
+        spBox.value = spSaved && spSaved.answer ? spSaved.answer : "";
+        spBlock.appendChild(spBox);
+
+        spBox.addEventListener("input", function(){ autoGrowBox(spBox); });
+        spBox.addEventListener("blur", function(){
+          var wd2 = ensureWeekData(wn);
+          var existing = wd2.answers[spKey] || {};
+          existing.answer = spBox.value;
+          wd2.answers[spKey] = existing;
+          saveState();
+          if(spBox.value.trim()) markCheckinToday();
+        });
+
+        var spSpk = document.createElement("button");
+        spSpk.className = "btn ghost small";
+        spSpk.type = "button";
+        spSpk.style.marginTop = "6px";
+        spSpk.textContent = "🔊 朗讀這段";
+        spSpk.addEventListener("click", function(){
+          if(!spBox.value.trim()){ alert("這格還沒有內容"); return; }
+          speakText(spBox.value);
+        });
+        spBlock.appendChild(spSpk);
+
+        listEl.appendChild(spBlock);
+      })();
     });
 
     // 週末複習頁面
