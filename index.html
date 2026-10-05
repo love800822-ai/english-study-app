@@ -701,7 +701,9 @@
       sel.value = weeks[0];
     }
   }
+  var userPickedWeek = false; // 這次開啟期間使用者是否手動切過週
   function switchWeek(wn){
+    userPickedWeek = true;
     state.currentWeek = String(wn);
     activeDay = 1;
     saveState();
@@ -739,7 +741,9 @@
             .catch(function(e){ console.warn(e); });
         });
         return Promise.all(fetches).then(function(){
-          if(manifest.latest && (!state.currentWeek || !state.weeksData[state.currentWeek])){
+          // 預設顯示最新週；但這次開啟期間若使用者手動切過週，就尊重他的選擇
+          if(manifest.latest && state.weeksData[String(manifest.latest)] &&
+             (!userPickedWeek || !state.weeksData[state.currentWeek])){
             state.currentWeek = String(manifest.latest);
           }
           state.lastSyncAt = Date.now();
