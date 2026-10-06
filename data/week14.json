@@ -239,24 +239,24 @@
       ],
       "speaking": [
         {
-          "en": "Why do you think companies become more cautious in hiring during uncertain times?",
-          "cn": "你認為為什麼公司在不確定時期招聘會更謹慎？"
+          "en": "Why do companies become more cautious in hiring during uncertain times?",
+          "cn": "為什麼公司在不確定時期招聘會更謹慎？"
         },
         {
           "en": "Have you seen companies around you use AI to avoid hiring new people?",
           "cn": "你有看過身邊的公司用 AI 來減少新人招聘嗎？"
         },
         {
-          "en": "Which headwind — inflation, interest rates, or tariffs — affects your life the most?",
-          "cn": "通膨、利率、關稅這些逆風，哪個對你的生活影響最大？"
+          "en": "Which headwind do you think slows hiring the most?",
+          "cn": "你認為哪個逆風最拖慢招聘？"
         },
         {
-          "en": "What would you do if you were jobless for more than 27 weeks?",
-          "cn": "如果你失業超過 27 週，你會怎麼辦？"
+          "en": "Have you personally felt pressure to do more because of AI?",
+          "cn": "你個人有因為 AI 而感受到要做更多事的壓力嗎？"
         },
         {
-          "en": "Is slower hiring better or worse than big layoffs, in your opinion? Why?",
-          "cn": "你認為放慢招聘比大規模裁員好還是糟？為什麼？"
+          "en": "If hiring slows, what can workers do to stay competitive?",
+          "cn": "如果招聘放緩，工作者可以做什麼保持競爭力？"
         }
       ]
     },
