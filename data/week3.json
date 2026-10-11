@@ -1,0 +1,678 @@
+{
+  "weekN": "3",
+  "weekStart": "2026-10-12",
+  "articleEn": "Why You Can't Fully Enjoy Life — Growing Up Too Fast",
+  "articleCn": "為什麼你總是無法好好享受生活？",
+  "days": [
+    {
+      "day": 1,
+      "topic_en": "Growing Up Too Fast — Guilt When Life Gets Easy",
+      "topic_cn": "太早長大 — 生活變輕鬆反而內疚",
+      "sentences": [
+        {
+          "text": "Some people had a childhood, others had responsibilities.",
+          "keywords": [
+            {
+              "kw": "childhood",
+              "def": "the period of life when you are a child"
+            },
+            {
+              "kw": "responsibilities",
+              "def": "duties you are expected to take care of"
+            }
+          ]
+        },
+        {
+          "text": "They learned early how to handle problems, control their emotions, and keep going even when nobody was there to guide them.",
+          "keywords": [
+            {
+              "kw": "handle problems",
+              "def": "deal with difficulties yourself"
+            },
+            {
+              "kw": "keep going",
+              "def": "continue despite difficulty"
+            },
+            {
+              "kw": "guide",
+              "def": "to show someone the way or give direction"
+            }
+          ]
+        },
+        {
+          "text": "And because they became mature so young, people often assume they have everything figured out.",
+          "keywords": [
+            {
+              "kw": "mature",
+              "def": "behaving like a sensible adult"
+            },
+            {
+              "kw": "have everything figured out",
+              "def": "understand life and know exactly what to do"
+            }
+          ]
+        },
+        {
+          "text": "But psychology suggests that growing up too fast can leave behind struggles that aren't always obvious.",
+          "keywords": [
+            {
+              "kw": "leave behind",
+              "def": "to cause something to remain afterwards"
+            },
+            {
+              "kw": "struggles",
+              "def": "difficulties that take effort to deal with"
+            },
+            {
+              "kw": "obvious",
+              "def": "easy to see or notice"
+            }
+          ]
+        },
+        {
+          "text": "Psychology connects this to hyper-responsibility, where a person becomes overly focused on preventing problems and taking care of what needs to be done.",
+          "keywords": [
+            {
+              "kw": "hyper-responsibility",
+              "def": "an excessive sense of duty for everything around you"
+            },
+            {
+              "kw": "overly focused on",
+              "def": "paying too much attention to"
+            }
+          ]
+        },
+        {
+          "text": "Sometimes, you feel guilty for not being needed.",
+          "keywords": [
+            {
+              "kw": "guilty",
+              "def": "feeling you have done something wrong"
+            },
+            {
+              "kw": "be needed",
+              "def": "to be necessary or useful to others"
+            }
+          ]
+        }
+      ],
+      "vocab": [
+        {
+          "word": "hyper-responsibility",
+          "pos": "n.",
+          "def": "an excessive sense of duty to prevent problems and care for everything"
+        },
+        {
+          "word": "have sth figured out",
+          "pos": "phrase",
+          "def": "to fully understand a situation and know what to do"
+        },
+        {
+          "word": "productive",
+          "pos": "adj.",
+          "def": "achieving or producing a lot; not wasting time"
+        },
+        {
+          "word": "keep going",
+          "pos": "phrase",
+          "def": "to continue doing something despite difficulty"
+        },
+        {
+          "word": "guilty",
+          "pos": "adj.",
+          "def": "feeling bad because you think you did something wrong"
+        }
+      ],
+      "speaking": [
+        {
+          "en": "Did you grow up faster than the people around you, or did you have a carefree childhood?",
+          "cn": "你比身邊的人更早長大，還是擁有無憂無慮的童年？"
+        },
+        {
+          "en": "Do you feel guilty when you finally have free time to relax? Why?",
+          "cn": "當你終於有空閒時間放鬆時，會感到內疚嗎？為什麼？"
+        },
+        {
+          "en": "When nothing needs fixing, can your mind simply rest? What happens instead?",
+          "cn": "當沒有事情需要處理時，你的腦袋能真正休息嗎？還是會發生什麼？"
+        },
+        {
+          "en": "Where does the pressure to always be productive come from, in your life?",
+          "cn": "在你的生活中，「一定要有生產力」的壓力是從哪裡來的？"
+        },
+        {
+          "en": "Is being needed by others important to how you value yourself?",
+          "cn": "「被別人需要」對你的自我價值感重要嗎？"
+        }
+      ]
+    },
+    {
+      "day": 2,
+      "topic_en": "What Do I Want? — Losing Touch with Your Own Wishes",
+      "topic_cn": "我想要什麼？— 與自己的渴望失聯",
+      "sentences": [
+        {
+          "text": "You don't know what you actually want.",
+          "keywords": [
+            {
+              "kw": "actually",
+              "def": "really; in fact"
+            }
+          ]
+        },
+        {
+          "text": "When you grow up too fast, many of your decisions may have been based on what was necessary rather than what you wanted.",
+          "keywords": [
+            {
+              "kw": "based on",
+              "def": "built or decided according to something"
+            },
+            {
+              "kw": "necessary",
+              "def": "needed; required by the situation"
+            },
+            {
+              "kw": "rather than",
+              "def": "instead of"
+            }
+          ]
+        },
+        {
+          "text": "You learn to ask, \"What needs to be done?\"",
+          "keywords": [
+            {
+              "kw": "needs to be done",
+              "def": "is required or must be completed"
+            }
+          ]
+        },
+        {
+          "text": "Not necessarily, \"What do I want?\"",
+          "keywords": [
+            {
+              "kw": "not necessarily",
+              "def": "not always true in every case"
+            }
+          ]
+        },
+        {
+          "text": "Over time, this can make your own preferences surprisingly difficult to recognize.",
+          "keywords": [
+            {
+              "kw": "over time",
+              "def": "gradually, as time passes"
+            },
+            {
+              "kw": "preferences",
+              "def": "the things you like or want more than others"
+            },
+            {
+              "kw": "recognize",
+              "def": "to identify or notice something"
+            }
+          ]
+        },
+        {
+          "text": "You may be good at making practical decisions for everyone else, yet struggle when someone asks you what you want for your life.",
+          "keywords": [
+            {
+              "kw": "practical",
+              "def": "sensible and realistic, focused on what works"
+            },
+            {
+              "kw": "struggle",
+              "def": "to find something very difficult"
+            }
+          ]
+        }
+      ],
+      "vocab": [
+        {
+          "word": "preference",
+          "pos": "n.",
+          "def": "a thing you like or want more than others"
+        },
+        {
+          "word": "practical",
+          "pos": "adj.",
+          "def": "sensible and focused on what works in real life"
+        },
+        {
+          "word": "recognize",
+          "pos": "v.",
+          "def": "to identify or become aware of something"
+        },
+        {
+          "word": "rather than",
+          "pos": "phrase",
+          "def": "instead of; in place of"
+        },
+        {
+          "word": "struggle",
+          "pos": "v.",
+          "def": "to try hard to do something that is very difficult"
+        }
+      ],
+      "speaking": [
+        {
+          "en": "Are you better at knowing what needs to be done than knowing what you want?",
+          "cn": "比起知道自己想要什麼，你是不是更擅長知道「該做什麼」？"
+        },
+        {
+          "en": "When was the last time you made a decision purely because YOU wanted it?",
+          "cn": "你上一次純粹因為「自己想要」而做決定是什麼時候？"
+        },
+        {
+          "en": "If money and duty didn't matter, what would you want for your life?",
+          "cn": "如果金錢和責任都不是問題，你想要什麼樣的人生？"
+        },
+        {
+          "en": "Why do you think some people lose touch with their own preferences?",
+          "cn": "你認為為什麼有些人會與自己的喜好失去連結？"
+        },
+        {
+          "en": "How could someone practice asking \"What do I want?\" more often?",
+          "cn": "一個人要怎麼練習更常問自己「我想要什麼」？"
+        }
+      ]
+    },
+    {
+      "day": 3,
+      "topic_en": "Older Inside — When Growth Doesn't Move at One Pace",
+      "topic_cn": "內心比實際年齡老 — 不同步的成長",
+      "sentences": [
+        {
+          "text": "You feel older than your age.",
+          "keywords": [
+            {
+              "kw": "older than your age",
+              "def": "more mature than your actual years"
+            }
+          ]
+        },
+        {
+          "text": "There may be moments when you're around people your age and realize you don't relate to the way they think anymore.",
+          "keywords": [
+            {
+              "kw": "people your age",
+              "def": "others born around the same time as you"
+            },
+            {
+              "kw": "relate to",
+              "def": "to understand and feel connected to"
+            }
+          ]
+        },
+        {
+          "text": "It's not necessarily because you think you're better than them.",
+          "keywords": [
+            {
+              "kw": "better than",
+              "def": "superior to"
+            }
+          ]
+        },
+        {
+          "text": "You simply had experiences that forced you to become serious earlier.",
+          "keywords": [
+            {
+              "kw": "forced you to",
+              "def": "made you do something without choice"
+            },
+            {
+              "kw": "serious",
+              "def": "thoughtful and responsible rather than playful"
+            }
+          ]
+        },
+        {
+          "text": "Psychology sometimes refers to this as asynchronous development, when different parts of someone's emotional and social development don't progress at the same pace.",
+          "keywords": [
+            {
+              "kw": "refers to this as",
+              "def": "calls this by the name of"
+            },
+            {
+              "kw": "asynchronous development",
+              "def": "growth where different parts mature at different speeds"
+            },
+            {
+              "kw": "at the same pace",
+              "def": "at an equal speed"
+            }
+          ]
+        },
+        {
+          "text": "You may look your age, but certain experiences made you feel much older inside.",
+          "keywords": [
+            {
+              "kw": "look your age",
+              "def": "appear as old as you really are"
+            },
+            {
+              "kw": "inside",
+              "def": "in your inner feelings and thoughts"
+            }
+          ]
+        }
+      ],
+      "vocab": [
+        {
+          "word": "relate to",
+          "pos": "phrase",
+          "def": "to understand and feel connected to someone or something"
+        },
+        {
+          "word": "asynchronous",
+          "pos": "adj.",
+          "def": "not happening or developing at the same time or speed"
+        },
+        {
+          "word": "pace",
+          "pos": "n.",
+          "def": "the speed at which something happens or develops"
+        },
+        {
+          "word": "progress",
+          "pos": "v.",
+          "def": "to develop or move forward over time"
+        },
+        {
+          "word": "force sb to do sth",
+          "pos": "phrase",
+          "def": "to make someone do something they did not choose"
+        }
+      ],
+      "speaking": [
+        {
+          "en": "Do you ever feel older inside than your actual age? In what situations?",
+          "cn": "你有沒有覺得內心比實際年齡老？在什麼情況下？"
+        },
+        {
+          "en": "Do you still relate to the way people your age think? Why or why not?",
+          "cn": "你還能理解同齡人思考的方式嗎？為什麼？"
+        },
+        {
+          "en": "What experiences forced you to become serious earlier than others?",
+          "cn": "哪些經歷讓你比別人更早變得成熟認真？"
+        },
+        {
+          "en": "Is feeling older than your age a strength, a burden, or both? Explain.",
+          "cn": "內心比實際年齡老，是優勢、負擔，還是兩者都有？說說看。"
+        },
+        {
+          "en": "How do you stay connected with friends whose life pace is different from yours?",
+          "cn": "當朋友的人生步調跟你不同，你如何維持彼此的連結？"
+        }
+      ]
+    },
+    {
+      "day": 4,
+      "topic_en": "\"I'm Fine\" — Hiding Problems Until the Limit",
+      "topic_cn": "「我很好」— 把問題藏到快撐不住",
+      "sentences": [
+        {
+          "text": "You hide your problems until they're almost unmanageable.",
+          "keywords": [
+            {
+              "kw": "hide",
+              "def": "to keep something secret from others"
+            },
+            {
+              "kw": "unmanageable",
+              "def": "too difficult to deal with or control"
+            }
+          ]
+        },
+        {
+          "text": "You became used to handling things yourself.",
+          "keywords": [
+            {
+              "kw": "became used to",
+              "def": "grew accustomed to; made it a habit"
+            }
+          ]
+        },
+        {
+          "text": "So, even when you're struggling, asking for help can feel strangely uncomfortable.",
+          "keywords": [
+            {
+              "kw": "asking for help",
+              "def": "requesting support from others"
+            },
+            {
+              "kw": "strangely",
+              "def": "in an unexpected or odd way"
+            }
+          ]
+        },
+        {
+          "text": "You might tell people, \"I'm fine.\" because explaining everything feels harder than simply dealing with it yourself.",
+          "keywords": [
+            {
+              "kw": "explaining",
+              "def": "making something clear by describing it"
+            },
+            {
+              "kw": "dealing with",
+              "def": "taking action to handle a problem"
+            }
+          ]
+        },
+        {
+          "text": "This can create a pattern where you appear calm and capable while carrying much more than people realize.",
+          "keywords": [
+            {
+              "kw": "pattern",
+              "def": "a repeated way of behaving"
+            },
+            {
+              "kw": "capable",
+              "def": "able to do things well"
+            },
+            {
+              "kw": "carrying",
+              "def": "bearing a weight or burden, here emotional"
+            }
+          ]
+        },
+        {
+          "text": "And sometimes, the people around you don't even know you needed help until you've already reached your limit.",
+          "keywords": [
+            {
+              "kw": "reached your limit",
+              "def": "arrived at the point where you cannot take any more"
+            }
+          ]
+        }
+      ],
+      "vocab": [
+        {
+          "word": "unmanageable",
+          "pos": "adj.",
+          "def": "too big or difficult to deal with or control"
+        },
+        {
+          "word": "be used to",
+          "pos": "phrase",
+          "def": "to be familiar with something because you do it often"
+        },
+        {
+          "word": "capable",
+          "pos": "adj.",
+          "def": "having the ability or skill to do something well"
+        },
+        {
+          "word": "reach your limit",
+          "pos": "phrase",
+          "def": "to get to the point where you cannot cope any more"
+        },
+        {
+          "word": "deal with",
+          "pos": "phrase",
+          "def": "to take action in order to solve a problem"
+        }
+      ],
+      "speaking": [
+        {
+          "en": "Is it hard for you to ask for help, even when you're struggling? Why?",
+          "cn": "即使很辛苦，你還是很難開口求助嗎？為什麼？"
+        },
+        {
+          "en": "When you tell people \"I'm fine\", how often is it actually true?",
+          "cn": "當你跟別人說「我很好」時，有多常是真的？"
+        },
+        {
+          "en": "Have you ever carried a problem alone until it was almost unmanageable? What happened?",
+          "cn": "你曾獨自扛著問題直到快撐不住嗎？後來怎麼了？"
+        },
+        {
+          "en": "How can you tell when someone who \"seems fine\" actually needs help?",
+          "cn": "你怎麼看出一個「看起來很好」的人其實需要幫助？"
+        },
+        {
+          "en": "What would make asking for help feel easier for you?",
+          "cn": "什麼樣的改變會讓你更容易開口求助？"
+        }
+      ]
+    },
+    {
+      "day": 5,
+      "topic_en": "Switching Off — From Surviving to Living",
+      "topic_cn": "學會關機 — 從生存模式走向真正生活",
+      "sentences": [
+        {
+          "text": "When you've spent years thinking about consequences, responsibilities, and what could go wrong, your mind can become heavily focused on the future.",
+          "keywords": [
+            {
+              "kw": "consequences",
+              "def": "the results of actions, often negative"
+            },
+            {
+              "kw": "what could go wrong",
+              "def": "possible problems or failures"
+            },
+            {
+              "kw": "heavily focused on",
+              "def": "concentrating very strongly on"
+            }
+          ]
+        },
+        {
+          "text": "Even during good moments, part of your mind may still be thinking about the next problem.",
+          "keywords": [
+            {
+              "kw": "good moments",
+              "def": "enjoyable or happy times"
+            }
+          ]
+        },
+        {
+          "text": "You may simply have never learned how to completely switch off.",
+          "keywords": [
+            {
+              "kw": "switch off",
+              "def": "to stop thinking about work or problems and relax"
+            }
+          ]
+        },
+        {
+          "text": "Sometimes, the person who seems incredibly mature still has a part of them that wonders what life would have been like if they didn't have to become strong so early.",
+          "keywords": [
+            {
+              "kw": "incredibly",
+              "def": "extremely; very"
+            },
+            {
+              "kw": "wonders",
+              "def": "thinks curiously about"
+            },
+            {
+              "kw": "what life would have been like",
+              "def": "how life might have turned out differently"
+            }
+          ]
+        },
+        {
+          "text": "So, if you sometimes feel exhausted from always being the strong one, it doesn't mean you're ungrateful for how far you've come.",
+          "keywords": [
+            {
+              "kw": "exhausted",
+              "def": "extremely tired"
+            },
+            {
+              "kw": "the strong one",
+              "def": "the person others depend on"
+            },
+            {
+              "kw": "ungrateful",
+              "def": "not appreciating what you have"
+            }
+          ]
+        },
+        {
+          "text": "But adulthood can also be the place where you finally learn that you don't have to spend the rest of your life surviving.",
+          "keywords": [
+            {
+              "kw": "adulthood",
+              "def": "the period of life as a grown-up"
+            },
+            {
+              "kw": "surviving",
+              "def": "just staying alive and coping, not truly enjoying life"
+            }
+          ]
+        }
+      ],
+      "vocab": [
+        {
+          "word": "switch off",
+          "pos": "phrase",
+          "def": "to stop thinking about work or worries and truly relax"
+        },
+        {
+          "word": "future-oriented",
+          "pos": "adj.",
+          "def": "focused mainly on the future rather than the present"
+        },
+        {
+          "word": "crave",
+          "pos": "v.",
+          "def": "to want something very strongly"
+        },
+        {
+          "word": "ungrateful",
+          "pos": "adj.",
+          "def": "not showing thanks or appreciation for what you have"
+        },
+        {
+          "word": "exhausted",
+          "pos": "adj.",
+          "def": "extremely tired, with no energy left"
+        }
+      ],
+      "speaking": [
+        {
+          "en": "Can you fully enjoy good moments, or is part of your mind already on the next problem?",
+          "cn": "你能完全享受美好時刻嗎？還是腦中已經在想下一個問題？"
+        },
+        {
+          "en": "What helps you completely switch off after a busy week?",
+          "cn": "忙碌一週後，什麼能幫你完全「關機」放鬆？"
+        },
+        {
+          "en": "Is there a simple childhood pleasure you still crave today? What is it?",
+          "cn": "有沒有一種簡單的童年快樂是你現在仍然渴望的？是什麼？"
+        },
+        {
+          "en": "What is the difference between surviving and truly living, in your view?",
+          "cn": "在你看來，「生存」和「真正生活」的差別是什麼？"
+        },
+        {
+          "en": "After studying this article all week, what is your biggest takeaway about growing up too fast — and what would you say to the part of you that had to become an adult too early?",
+          "cn": "學完這篇文章一整週，你對「太早長大」最大的收穫是什麼？你想對那個太早成為大人的自己說什麼？"
+        }
+      ]
+    }
+  ]
+}
