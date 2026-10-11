@@ -490,6 +490,27 @@
     }catch(e){ /* storage unavailable, silently ignore - user can export manually */ }
     ghScheduleSync();
   }
+  // 2026-10-11 週數重編：week13 -> week1、week14 -> week2（保留既有回答與單字來源）
+  var WEEK_RENUMBER = {"13": "1", "14": "2"};
+  function migrateWeekNumbers(st){
+    if(st.weeksData){
+      Object.keys(WEEK_RENUMBER).forEach(function(oldWn){
+        var newWn = WEEK_RENUMBER[oldWn];
+        if(st.weeksData[oldWn] && !st.weeksData[newWn]){
+          st.weeksData[newWn] = st.weeksData[oldWn];
+        }
+        delete st.weeksData[oldWn];
+      });
+    }
+    if(st.currentWeek && WEEK_RENUMBER[st.currentWeek]){
+      st.currentWeek = WEEK_RENUMBER[st.currentWeek];
+    }
+    (st.vocabBank || []).forEach(function(e){
+      (e.sources || []).forEach(function(s){
+        if(s && WEEK_RENUMBER[String(s.weekN)]) s.weekN = WEEK_RENUMBER[String(s.weekN)];
+      });
+    });
+  }
   function loadState(){
     try{
       var raw = localStorage.getItem(STORAGE_KEY);
@@ -502,6 +523,7 @@
     if(!state.reviewLog || typeof state.reviewLog !== "object" || !Array.isArray(state.reviewLog.served)){
       state.reviewLog = {date:"", served:[]};
     }
+    migrateWeekNumbers(state);
     (state.vocabBank || []).forEach(function(e){
       if(typeof e.box !== "number" || e.box < 0) e.box = 0;
       if(e.box > BOX_INTERVALS.length - 1) e.box = BOX_INTERVALS.length - 1;
@@ -2086,7 +2108,7 @@
       }
       if(p.answers){
         Object.keys(p.answers).forEach(function(wn){
-          var wd = ensureWeekData(wn);
+          var wd = ensureWeekData(WEEK_RENUMBER[wn] || wn); // 雲端舊週數也重新對應
           var remoteA = p.answers[wn] || {};
           Object.keys(remoteA).forEach(function(k){
             var r = remoteA[k];
