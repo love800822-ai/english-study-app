@@ -1,0 +1,686 @@
+{
+  "weekN": "4",
+  "weekStart": "2026-10-20",
+  "articleEn": "Why Smart People Often Feel They're Not Smart Enough",
+  "articleCn": "為什麼聰明人經常覺得自己不夠聰明",
+  "days": [
+    {
+      "day": 1,
+      "topic_en": "Quiet Signs of Intelligence — Admitting You Don't Know",
+      "topic_cn": "聰明的無聲跡象 — 勇於承認「我不知道」",
+      "sentences": [
+        {
+          "text": "We live in a world that measures intelligence by test scores, quick answers, and loud confidence.",
+          "keywords": [
+            {
+              "kw": "measure by",
+              "def": "to judge something using a particular standard"
+            },
+            {
+              "kw": "loud confidence",
+              "def": "bold, noticeable self-assurance"
+            }
+          ]
+        },
+        {
+          "text": "Because of that, it's remarkably easy to go through life assuming you're just average or even falling behind.",
+          "keywords": [
+            {
+              "kw": "remarkably",
+              "def": "to a surprising degree"
+            },
+            {
+              "kw": "falling behind",
+              "def": "making less progress than others"
+            }
+          ]
+        },
+        {
+          "text": "In fact, psychology shows that some of the clearest markers of high cognitive ability are subtle habits you might actually see as flaws or quirks.",
+          "keywords": [
+            {
+              "kw": "marker",
+              "def": "a sign that shows something exists"
+            },
+            {
+              "kw": "subtle",
+              "def": "not obvious; easy to miss"
+            },
+            {
+              "kw": "quirk",
+              "def": "a small, unusual habit or trait"
+            }
+          ]
+        },
+        {
+          "text": "While insecure people often bluff their way through conversations to sound knowledgeable, you have no problem saying, \"I don't know. Tell me more.\"",
+          "keywords": [
+            {
+              "kw": "bluff one's way through",
+              "def": "to pretend to know in order to get by"
+            },
+            {
+              "kw": "knowledgeable",
+              "def": "knowing a lot about something"
+            }
+          ]
+        },
+        {
+          "text": "It's a hallmark of high intelligence known as intellectual humility.",
+          "keywords": [
+            {
+              "kw": "hallmark",
+              "def": "a typical feature that proves quality or identity"
+            },
+            {
+              "kw": "intellectual humility",
+              "def": "accepting the limits of what you know"
+            }
+          ]
+        },
+        {
+          "text": "Smart minds view gaps in their knowledge not as a threat to their ego, but as an opportunity to learn something new.",
+          "keywords": [
+            {
+              "kw": "gap in knowledge",
+              "def": "something you do not yet know"
+            },
+            {
+              "kw": "ego",
+              "def": "your sense of your own importance"
+            }
+          ]
+        }
+      ],
+      "vocab": [
+        {
+          "word": "subtle",
+          "pos": "adj.",
+          "def": "not obvious; needing careful attention to notice"
+        },
+        {
+          "word": "quirk",
+          "pos": "n.",
+          "def": "a small, unusual habit or feature of a person"
+        },
+        {
+          "word": "bluff one's way through",
+          "pos": "phrase",
+          "def": "to pretend to know or be able, in order to get past a situation"
+        },
+        {
+          "word": "hallmark",
+          "pos": "n.",
+          "def": "a typical sign or feature that shows what something is"
+        },
+        {
+          "word": "intellectual humility",
+          "pos": "n.",
+          "def": "the quality of accepting the limits of your own knowledge"
+        }
+      ],
+      "speaking": [
+        {
+          "en": "Do you think test scores and quick answers are good ways to measure intelligence? Why or why not?",
+          "cn": "你認為考試分數和快速回答是衡量智力的好方法嗎？為什麼？"
+        },
+        {
+          "en": "Have you ever assumed you were just average or falling behind? What made you feel that way?",
+          "cn": "你曾經覺得自己只是普通人，甚至落後別人嗎？是什麼讓你有這種感覺？"
+        },
+        {
+          "en": "When you don't know something in a conversation, do you admit it or bluff your way through?",
+          "cn": "在對話中遇到不懂的事情時，你會承認還是蒙混過去？"
+        },
+        {
+          "en": "Why do you think saying \"I don't know\" feels risky for many people?",
+          "cn": "為什麼你覺得對很多人來說，說「我不知道」感覺很冒險？"
+        },
+        {
+          "en": "Can you describe a time when a gap in your knowledge became an opportunity to learn something new?",
+          "cn": "你能描述一次「知識缺口」變成學習新事物機會的經驗嗎？"
+        }
+      ]
+    },
+    {
+      "day": 2,
+      "topic_en": "Self-Talk & Sensory Overload — A Busy, Sensitive Brain",
+      "topic_cn": "自我對話與感官超載 — 忙碌而敏感的大腦",
+      "sentences": [
+        {
+          "text": "If you catch yourself talking through your thoughts out loud while solving a problem or organizing your day, don't worry, you're not losing it.",
+          "keywords": [
+            {
+              "kw": "catch yourself doing",
+              "def": "to suddenly notice you are doing something"
+            },
+            {
+              "kw": "lose it",
+              "def": "to go crazy or lose control (informal)"
+            }
+          ]
+        },
+        {
+          "text": "Cognitive research shows that self-talk isn't a sign of craziness.",
+          "keywords": [
+            {
+              "kw": "self-talk",
+              "def": "speaking to yourself, silently or out loud"
+            },
+            {
+              "kw": "craziness",
+              "def": "behavior that seems mentally unstable"
+            }
+          ]
+        },
+        {
+          "text": "Verbalizing your thoughts helps quiet mental clutter, sharpens focus, and accelerates complex problem-solving.",
+          "keywords": [
+            {
+              "kw": "verbalize",
+              "def": "to express thoughts in words"
+            },
+            {
+              "kw": "mental clutter",
+              "def": "too many disorganized thoughts in your head"
+            },
+            {
+              "kw": "sharpen",
+              "def": "to make something clearer or more effective"
+            }
+          ]
+        },
+        {
+          "text": "Do you struggle to focus when there's background chatter, a flickering light, or a cluttered room?",
+          "keywords": [
+            {
+              "kw": "background chatter",
+              "def": "other people's talking around you"
+            },
+            {
+              "kw": "cluttered",
+              "def": "messy; filled with too many things"
+            }
+          ]
+        },
+        {
+          "text": "Highly intelligent brains possess superior sensory processing and pattern awareness.",
+          "keywords": [
+            {
+              "kw": "possess",
+              "def": "to have or own"
+            },
+            {
+              "kw": "sensory processing",
+              "def": "how the brain handles sights, sounds and other input"
+            }
+          ]
+        },
+        {
+          "text": "Because your mind naturally processes far more environmental data than average, noisy or chaotic surroundings can cause sensory overload much faster.",
+          "keywords": [
+            {
+              "kw": "chaotic",
+              "def": "completely disordered and confusing"
+            },
+            {
+              "kw": "sensory overload",
+              "def": "when your senses receive more input than you can handle"
+            }
+          ]
+        }
+      ],
+      "vocab": [
+        {
+          "word": "verbalize",
+          "pos": "v.",
+          "def": "to express thoughts or feelings in spoken words"
+        },
+        {
+          "word": "mental clutter",
+          "pos": "n.",
+          "def": "too many disorganized thoughts filling your mind"
+        },
+        {
+          "word": "cluttered",
+          "pos": "adj.",
+          "def": "untidy; covered with too many things"
+        },
+        {
+          "word": "sensory overload",
+          "pos": "n.",
+          "def": "a state where your senses receive more input than you can process"
+        },
+        {
+          "word": "chaotic",
+          "pos": "adj.",
+          "def": "in a state of complete disorder and confusion"
+        }
+      ],
+      "speaking": [
+        {
+          "en": "Do you ever talk to yourself out loud while solving a problem? Does it actually help you?",
+          "cn": "你解決問題時會大聲自言自語嗎？這真的有幫助嗎？"
+        },
+        {
+          "en": "What helps you quiet the mental clutter when your head feels too full?",
+          "cn": "當腦袋覺得太滿的時候，什麼方法能幫你安靜下那些雜亂的思緒？"
+        },
+        {
+          "en": "How well can you focus in a noisy cafe or a cluttered room?",
+          "cn": "在吵雜的咖啡廳或雜亂的房間裡，你能專注到什麼程度？"
+        },
+        {
+          "en": "What kind of environment do you need to do your best work? Describe it.",
+          "cn": "你需要什麼樣的環境才能做出最好的工作表現？請描述一下。"
+        },
+        {
+          "en": "Have you ever experienced sensory overload? What did you do to recover?",
+          "cn": "你曾經歷過感官超載嗎？你做了什麼來恢復？"
+        }
+      ]
+    },
+    {
+      "day": 3,
+      "topic_en": "Pivot & Curiosity — Fluid Intelligence at Work",
+      "topic_cn": "隨機應變與好奇心 — 流動智力的展現",
+      "sentences": [
+        {
+          "text": "When unexpected problems pop up, some people freeze or panic.",
+          "keywords": [
+            {
+              "kw": "pop up",
+              "def": "to appear suddenly"
+            },
+            {
+              "kw": "freeze",
+              "def": "to suddenly stop moving or acting"
+            }
+          ]
+        },
+        {
+          "text": "But if your natural instinct is to pivot, adjust your strategy, and find a workaround, that's a direct reflection of fluid intelligence.",
+          "keywords": [
+            {
+              "kw": "pivot",
+              "def": "to quickly change direction or approach"
+            },
+            {
+              "kw": "workaround",
+              "def": "an alternative way to get past a problem"
+            },
+            {
+              "kw": "fluid intelligence",
+              "def": "the ability to solve new problems without prior knowledge"
+            }
+          ]
+        },
+        {
+          "text": "Intelligence isn't just about what you've memorized, it's about how quickly you can navigate brand new, unpredictable situations.",
+          "keywords": [
+            {
+              "kw": "navigate",
+              "def": "to find your way through something difficult"
+            },
+            {
+              "kw": "unpredictable",
+              "def": "impossible to know in advance"
+            }
+          ]
+        },
+        {
+          "text": "Where others see mundane everyday things, you see complex systems.",
+          "keywords": [
+            {
+              "kw": "mundane",
+              "def": "ordinary and not interesting"
+            },
+            {
+              "kw": "complex systems",
+              "def": "structures with many connected parts"
+            }
+          ]
+        },
+        {
+          "text": "You find yourself asking why things work the way they do, digging down internet rabbit holes at 1:00 a.m., or wanting to understand the mechanics behind everyday events.",
+          "keywords": [
+            {
+              "kw": "rabbit hole",
+              "def": "a topic you keep exploring deeper and deeper"
+            },
+            {
+              "kw": "mechanics",
+              "def": "the way something works"
+            }
+          ]
+        },
+        {
+          "text": "That relentless intrinsic curiosity is one of the single strongest indicators of high cognitive capacity.",
+          "keywords": [
+            {
+              "kw": "relentless",
+              "def": "never stopping or weakening"
+            },
+            {
+              "kw": "intrinsic",
+              "def": "coming from inside yourself, not from outside rewards"
+            }
+          ]
+        }
+      ],
+      "vocab": [
+        {
+          "word": "pivot",
+          "pos": "v.",
+          "def": "to quickly change direction, plan, or strategy"
+        },
+        {
+          "word": "workaround",
+          "pos": "n.",
+          "def": "an alternative method to get past a problem or limitation"
+        },
+        {
+          "word": "mundane",
+          "pos": "adj.",
+          "def": "very ordinary; lacking excitement"
+        },
+        {
+          "word": "go down a rabbit hole",
+          "pos": "phrase",
+          "def": "to get deeply absorbed in exploring a topic, often online"
+        },
+        {
+          "word": "intrinsic",
+          "pos": "adj.",
+          "def": "belonging naturally to something; driven from within"
+        }
+      ],
+      "speaking": [
+        {
+          "en": "When plans suddenly change, do you freeze, panic, or pivot? Give an example.",
+          "cn": "當計畫突然改變時，你會愣住、恐慌，還是隨機應變？請舉例。"
+        },
+        {
+          "en": "Describe a time you found a workaround for an unexpected problem.",
+          "cn": "描述一次你為突發問題找到替代解法的經驗。"
+        },
+        {
+          "en": "What mundane, everyday thing have you always wondered about how it works?",
+          "cn": "有哪個平凡的日常事物，你一直很好奇它是怎麼運作的？"
+        },
+        {
+          "en": "Have you ever gone down an internet rabbit hole late at night? What was it about?",
+          "cn": "你曾在深夜掉進網路的「兔子洞」嗎？那是關於什麼的？"
+        },
+        {
+          "en": "Which matters more at work: what you have memorized, or how you handle brand new situations? Why?",
+          "cn": "在工作中，哪個比較重要：你記住的知識，還是你應對全新狀況的能力？為什麼？"
+        }
+      ]
+    },
+    {
+      "day": 4,
+      "topic_en": "Self-Control & Solitude — Delay and Alone Time",
+      "topic_cn": "自制力與獨處 — 延遲滿足與獨處的力量",
+      "sentences": [
+        {
+          "text": "Six, you have high self-control and can delay gratification.",
+          "keywords": [
+            {
+              "kw": "self-control",
+              "def": "the ability to control your actions and desires"
+            },
+            {
+              "kw": "delay gratification",
+              "def": "to wait for a bigger reward instead of taking a small one now"
+            }
+          ]
+        },
+        {
+          "text": "If you're able to resist short-term temptations in order to achieve a bigger, long-term goal, your brain is functioning at an advanced level.",
+          "keywords": [
+            {
+              "kw": "resist temptation",
+              "def": "to refuse something attractive but unhelpful"
+            },
+            {
+              "kw": "long-term goal",
+              "def": "an aim that takes a long time to achieve"
+            }
+          ]
+        },
+        {
+          "text": "Psychological studies, including the famous marshmallow test, consistently show a strong link between high intelligence and the ability to exercise self-regulation and long-term planning.",
+          "keywords": [
+            {
+              "kw": "self-regulation",
+              "def": "controlling your own behavior and emotions"
+            },
+            {
+              "kw": "a strong link between",
+              "def": "a close connection between two things"
+            }
+          ]
+        },
+        {
+          "text": "Seven, you enjoy spending time completely alone.",
+          "keywords": [
+            {
+              "kw": "completely alone",
+              "def": "with no other people at all"
+            }
+          ]
+        },
+        {
+          "text": "While social connection is essential, people with high cognitive ability often report higher life satisfaction when they spend plenty of time by themselves.",
+          "keywords": [
+            {
+              "kw": "essential",
+              "def": "absolutely necessary"
+            },
+            {
+              "kw": "life satisfaction",
+              "def": "how happy you feel about your life overall"
+            }
+          ]
+        },
+        {
+          "text": "Solitude gives your brain the necessary space to process complex ideas, digest information, and recharge without the constant drain of external social stimuli.",
+          "keywords": [
+            {
+              "kw": "solitude",
+              "def": "the state of being alone, often by choice"
+            },
+            {
+              "kw": "recharge",
+              "def": "to get your energy back"
+            },
+            {
+              "kw": "drain",
+              "def": "something that gradually uses up your energy"
+            }
+          ]
+        }
+      ],
+      "vocab": [
+        {
+          "word": "delay gratification",
+          "pos": "phrase",
+          "def": "to resist a small reward now in order to gain a bigger reward later"
+        },
+        {
+          "word": "temptation",
+          "pos": "n.",
+          "def": "something attractive that you want but should probably avoid"
+        },
+        {
+          "word": "self-regulation",
+          "pos": "n.",
+          "def": "the ability to manage your own behavior and emotions"
+        },
+        {
+          "word": "solitude",
+          "pos": "n.",
+          "def": "the state of being alone, especially when peaceful and chosen"
+        },
+        {
+          "word": "recharge",
+          "pos": "v.",
+          "def": "to rest in order to get back your energy"
+        }
+      ],
+      "speaking": [
+        {
+          "en": "Have you ever given up a short-term temptation for a long-term goal? What was it?",
+          "cn": "你曾為了長期目標而放棄眼前的誘惑嗎？那是什麼？"
+        },
+        {
+          "en": "How do you stop yourself from checking your phone when you need to focus?",
+          "cn": "需要專注時，你如何克制自己不去滑手機？"
+        },
+        {
+          "en": "Do you enjoy spending time completely alone? What do you usually do?",
+          "cn": "你喜歡完全獨處的時光嗎？你通常會做什麼？"
+        },
+        {
+          "en": "How do you recharge after a socially draining day?",
+          "cn": "在社交耗盡能量的一天之後，你如何充電？"
+        },
+        {
+          "en": "Do you think self-control can be trained like a muscle? How would you train it?",
+          "cn": "你認為自制力可以像肌肉一樣訓練嗎？你會怎麼訓練它？"
+        }
+      ]
+    },
+    {
+      "day": 5,
+      "topic_en": "Doubting Yourself — The Dunning-Kruger Effect",
+      "topic_cn": "懷疑自己 — 鄧寧-克魯格效應",
+      "sentences": [
+        {
+          "text": "Eight, you assume you're not that smart.",
+          "keywords": [
+            {
+              "kw": "assume",
+              "def": "to believe something without proof"
+            }
+          ]
+        },
+        {
+          "text": "Ironically, the ultimate proof of intelligence is doubting it.",
+          "keywords": [
+            {
+              "kw": "ironically",
+              "def": "in a way opposite to what you would expect"
+            },
+            {
+              "kw": "ultimate proof",
+              "def": "the strongest possible evidence"
+            }
+          ]
+        },
+        {
+          "text": "Known as the Dunning-Kruger effect, people with limited knowledge often overestimate their abilities, while highly intelligent people are so hyper-aware of how vast the world is that they constantly underestimate themselves.",
+          "keywords": [
+            {
+              "kw": "overestimate",
+              "def": "to think something is bigger or better than it is"
+            },
+            {
+              "kw": "hyper-aware",
+              "def": "extremely conscious of something"
+            },
+            {
+              "kw": "vast",
+              "def": "extremely large"
+            }
+          ]
+        },
+        {
+          "text": "If you routinely worry that you aren't smart enough, that awareness itself proves you are.",
+          "keywords": [
+            {
+              "kw": "routinely",
+              "def": "as a regular habit"
+            },
+            {
+              "kw": "awareness",
+              "def": "knowledge or understanding of a situation"
+            }
+          ]
+        },
+        {
+          "text": "If you recognized yourself in these points, it's time to stop selling yourself short.",
+          "keywords": [
+            {
+              "kw": "sell yourself short",
+              "def": "to undervalue your own abilities"
+            }
+          ]
+        },
+        {
+          "text": "Your brain might operate differently than what traditional standards praise, but those subtle habits are proof of a sharp, capable mind.",
+          "keywords": [
+            {
+              "kw": "operate",
+              "def": "to work or function"
+            },
+            {
+              "kw": "praise",
+              "def": "to express approval or admiration"
+            }
+          ]
+        }
+      ],
+      "vocab": [
+        {
+          "word": "overestimate",
+          "pos": "v.",
+          "def": "to judge something as greater or better than it really is"
+        },
+        {
+          "word": "underestimate",
+          "pos": "v.",
+          "def": "to judge something as smaller or worse than it really is"
+        },
+        {
+          "word": "hyper-aware",
+          "pos": "adj.",
+          "def": "extremely and sometimes excessively conscious of something"
+        },
+        {
+          "word": "sell yourself short",
+          "pos": "phrase",
+          "def": "to undervalue yourself and your abilities"
+        },
+        {
+          "word": "routinely",
+          "pos": "adv.",
+          "def": "regularly; as a normal part of life"
+        }
+      ],
+      "speaking": [
+        {
+          "en": "Do you tend to overestimate or underestimate your own abilities? Why do you think that is?",
+          "cn": "你傾向高估還是低估自己的能力？你覺得原因是什麼？"
+        },
+        {
+          "en": "Have you ever met someone with limited knowledge who was extremely confident? What happened?",
+          "cn": "你遇過知識有限卻非常自信的人嗎？發生了什麼事？"
+        },
+        {
+          "en": "When you worry you're not good enough at something, how do you talk yourself through it?",
+          "cn": "當你擔心自己不夠好時，你會怎麼跟自己對話度過？"
+        },
+        {
+          "en": "In what part of your life have you been selling yourself short?",
+          "cn": "在生活的哪個部分，你一直低估了自己？"
+        },
+        {
+          "en": "After studying this article all week, which of the eight quiet signs do you see most in yourself, and has it changed how you judge your own intelligence?",
+          "cn": "讀完這篇文章一週後，八個無聲跡象中你在自己身上最常看到哪一個？它改變了你評價自己智力的方式嗎？"
+        }
+      ]
+    }
+  ]
+}
