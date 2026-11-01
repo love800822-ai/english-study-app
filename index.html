@@ -1310,6 +1310,100 @@
     return out;
   }
 
+  // ---------- 月複習（每 4 週一次，主：自己講過的內容，次：四週文本）----------
+  // 回傳最近一個「完整 4 週區塊」的週數陣列（字串），不足 4 週回傳 null
+  function getMonthlyBlock(){
+    var weeks = Object.keys(state.weeksData).filter(function(w){
+      var wd = state.weeksData[w];
+      return wd && wd.days && wd.days.length > 0;
+    }).sort(function(a,b){ return Number(a) - Number(b); });
+    if(weeks.length < 4) return null;
+    var blockIdx = Math.floor(weeks.length / 4);
+    return weeks.slice((blockIdx-1)*4, blockIdx*4);
+  }
+
+  // 收集某週 5 天「重點句型 Key Patterns」欄的內容
+  function collectWeekKeyPatterns(wn){
+    var wd = state.weeksData[wn];
+    if(!wd || !wd.answers) return "";
+    var parts = [];
+    (wd.days||[]).forEach(function(d){
+      var sp = wd.answers[d.day + "-sp"];
+      if(sp && sp.answer && sp.answer.trim()) parts.push(sp.answer.trim());
+    });
+    return parts.join("\n");
+  }
+
+  // 挑該週 5 題：優先挑「已回答但答案最短」的（最弱處），不足再補未回答的
+  function pickWeekReviewQuestions(wn){
+    var wd = state.weeksData[wn];
+    if(!wd) return [];
+    var answered = [], blank = [];
+    (wd.days||[]).forEach(function(d){
+      (d.speaking||[]).forEach(function(q, i){
+        var saved = wd.answers[d.day + "-" + i];
+        var ans = saved && saved.answer ? saved.answer.trim() : "";
+        var item = {day: d.day, topic: d.topic_en || "", q: q.en, ans: ans};
+        if(ans) answered.push(item); else blank.push(item);
+      });
+    });
+    answered.sort(function(a,b){ return a.ans.length - b.ans.length; });
+    return answered.concat(blank).slice(0, 5);
+  }
+
+  // Day 1-4：重答某一週的 5 題；Day 5：四週綜合
+  function buildMonthlyReviewPrompt(blockWeeks, dayNum){
+    var label = "Weeks " + blockWeeks[0] + "-" + blockWeeks[blockWeeks.length-1];
+    if(dayNum <= 4){
+      var wn = blockWeeks[dayNum - 1];
+      var wd = state.weeksData[wn];
+      var picks = pickWeekReviewQuestions(wn);
+      if(picks.length === 0) return "";
+      var patterns = collectWeekKeyPatterns(wn);
+      var out = "Monthly REVIEW session (Day " + dayNum + " of 5, reviewing " + label + ") - today: Week " + wn +
+        (wd.articleEn ? ": " + wd.articleEn : "") + "\n\n" +
+        "This is a REVIEW session, not a new lesson. Rules:\n" +
+        "1. Below are 5 questions I practiced before, WITH my polished answers from back then.\n" +
+        "2. Ask me each question one at a time, exactly as written. Do NOT show or read my old answer before I answer.\n" +
+        "3. After each new answer, compare it with my old polished answer: what improved, what regressed, plus 1-2 upgrades.\n" +
+        "4. Push me to reuse the KEY PATTERNS below in my new answers; nudge me when I miss a natural chance.\n" +
+        "5. Keep everything else from your usual session rules (follow-ups, feedback style, wrap-up with\n" +
+        "   \"=== My 5 polished answers ===\" using my NEW answers).\n\n";
+      if(patterns){
+        out += "=== KEY PATTERNS TO REUSE (from my Week " + wn + " sessions) ===\n" + patterns + "\n\n";
+      }
+      out += "=== 5 QUESTIONS + MY OLD ANSWERS ===\n";
+      picks.forEach(function(p, i){
+        out += "Q" + (i+1) + " (Day " + p.day + (p.topic ? ": " + p.topic : "") + "): " + p.q + "\n";
+        out += "My old answer: " + (p.ans || "(I never answered this one - treat it as new)") + "\n\n";
+      });
+      out += "Begin the review now: friendly opener, then Question 1.";
+      return out;
+    }
+    // Day 5：綜合回顧
+    var out5 = "Monthly REVIEW session (Day 5 of 5 - synthesis of " + label + ")\n\n" +
+      "This is the final synthesis day. Rules:\n" +
+      "1. For each of the 4 articles below, ask me to retell it from memory in about 1 minute.\n" +
+      "   After each retell, give brief feedback on structure and vocabulary.\n" +
+      "2. Then run a KEY PATTERNS drill: pick 6-8 patterns from the list below, give me a everyday situation\n" +
+      "   for each, and have me make a sentence with the pattern on the spot.\n" +
+      "3. Finish with a 3-5 minute free conversation that connects at least two of the 4 topics.\n" +
+      "4. Wrap up with \"=== Review highlights ===\": my 3 best sentences today, the patterns I used well,\n" +
+      "   and the top 3 things to keep drilling next month.\n\n" +
+      "=== THE 4 ARTICLES ===\n";
+    blockWeeks.forEach(function(w){
+      var wd = state.weeksData[w];
+      out5 += "Week " + w + ": " + (wd.articleEn || "(untitled)") + "\n";
+    });
+    var allPat = blockWeeks.map(function(w){ return collectWeekKeyPatterns(w); })
+      .filter(Boolean).join("\n");
+    if(allPat){
+      out5 += "\n=== ALL KEY PATTERNS (from my own sessions, " + label + ") ===\n" + allPat + "\n";
+    }
+    out5 += "\nBegin the synthesis review now: friendly opener, then ask me to retell the Week " + blockWeeks[0] + " article.";
+    return out5;
+  }
+
   function getSession(wn, day){
     if(!state.sessions) state.sessions = {};
     var key = sessionKeyFor(wn, day);
@@ -1648,6 +1742,20 @@
     });
     tabsEl.appendChild(rb);
 
+    // 月複習 tab（累積滿 4 週才出現）
+    var monthlyBlock = getMonthlyBlock();
+    if(monthlyBlock){
+      var mb = document.createElement("button");
+      mb.className = "tab-btn" + (activeDay === "M" ? " active" : "");
+      mb.textContent = "📅 月複習";
+      mb.type = "button";
+      mb.addEventListener("click", function(){
+        activeDay = "M";
+        renderResults();
+      });
+      tabsEl.appendChild(mb);
+    }
+
     // panels
     var panelsEl = $("dayPanels");
     panelsEl.innerHTML = "";
@@ -1958,6 +2066,101 @@
         fieldsEl.appendChild(block);
       });
     })();
+
+    // 月複習頁面（每 4 週一次：Day1-4 重答各週 5 題＋重點句型，Day5 綜合）
+    if(monthlyBlock){(function(){
+      var blockKey = "M" + monthlyBlock.join("-");
+      var label = "Week " + monthlyBlock[0] + "–" + monthlyBlock[monthlyBlock.length-1];
+      var panel = document.createElement("div");
+      panel.className = "day-panel" + (activeDay === "M" ? " active" : "");
+      panel.innerHTML =
+        '<div class="day-meta">Monthly Review · ' + escapeHtml(label) + '</div>' +
+        '<div class="day-title-en">Monthly Review 月複習週</div>' +
+        '<div class="day-title-cn">主：重答你實際練過的題目＋重用你的重點句型；次：四週文章回顧。每天一包，連練 5 天。</div>' +
+        '<details class="sec" open><summary><span class="sec-title">每日複習包</span><span class="sec-arrow">▶</span></summary><div class="sec-body">' +
+        '<div class="monthly-btn-list"></div>' +
+        '</div></details>' +
+        '<details class="sec"><summary><span class="sec-title">月複習筆記</span><span class="sec-arrow">▶</span></summary><div class="sec-body">' +
+        '<div class="monthly-note"></div>' +
+        '</div></details>';
+      panelsEl.appendChild(panel);
+
+      var listEl2 = panel.querySelector(".monthly-btn-list");
+      var dayLabels = monthlyBlock.map(function(w, i){
+        var wd3 = state.weeksData[w];
+        return "Day " + (i+1) + " · 重答 Week " + w + (wd3 && wd3.articleEn ? "：" + wd3.articleEn : "");
+      });
+      dayLabels.push("Day 5 · 綜合回顧（4 篇文章重述 + 句型造句 + 自由對話）");
+
+      dayLabels.forEach(function(lbl, i){
+        var dayNum = i + 1;
+        var row2 = document.createElement("div");
+        row2.className = "q-block";
+
+        var t = document.createElement("div");
+        t.className = "q-en";
+        t.textContent = lbl;
+        row2.appendChild(t);
+
+        var cb = document.createElement("button");
+        cb.className = "btn";
+        cb.type = "button";
+        cb.style.marginTop = "6px";
+        cb.textContent = "📋 複製 Day " + dayNum + " 複習包";
+        cb.addEventListener("click", function(){
+          var prompt = buildMonthlyReviewPrompt(monthlyBlock, dayNum);
+          if(!prompt){ alert("這一週還沒有可複習的內容。"); return; }
+          function done(){
+            cb.textContent = "已複製！貼到你的 Project →";
+            setTimeout(function(){ cb.textContent = "📋 複製 Day " + dayNum + " 複習包"; }, 2500);
+          }
+          if(navigator.clipboard && navigator.clipboard.writeText){
+            navigator.clipboard.writeText(prompt).then(done).catch(function(){
+              window.prompt("自動複製失敗，請手動全選複製：", prompt);
+            });
+          }else{
+            window.prompt("請手動全選複製：", prompt);
+          }
+        });
+        row2.appendChild(cb);
+        listEl2.appendChild(row2);
+      });
+
+      var gptOpen2 = document.createElement("button");
+      gptOpen2.className = "btn ghost small";
+      gptOpen2.type = "button";
+      gptOpen2.style.marginTop = "8px";
+      gptOpen2.textContent = "開啟 ChatGPT ↗";
+      gptOpen2.addEventListener("click", openChatGptApp);
+      listEl2.appendChild(gptOpen2);
+
+      var hint2 = document.createElement("div");
+      hint2.className = "hint";
+      hint2.textContent = "練法：每天按一包 → 貼到「英文口說教練」Project 開新對話 → 教練會先讓你重答（不先看舊答案），再拿你四週前的答案對比，並盯你重用自己記下的重點句型。Day 5 做四篇文章的 1 分鐘重述與句型造句。";
+      listEl2.appendChild(hint2);
+
+      // 筆記欄（依 4 週區塊各存一份）
+      var noteWrap = panel.querySelector(".monthly-note");
+      var noteBlock = document.createElement("div");
+      noteBlock.className = "q-block";
+      var nt = document.createElement("div");
+      nt.className = "q-en";
+      nt.textContent = "複習心得 & 下個月想加強的";
+      noteBlock.appendChild(nt);
+      var noteBox = document.createElement("textarea");
+      noteBox.className = "answer-box";
+      noteBox.placeholder = "記下這次月複習的進步、退步、還想補強的句型...";
+      if(!state.monthlyNotes) state.monthlyNotes = {};
+      noteBox.value = state.monthlyNotes[blockKey] || "";
+      noteBlock.appendChild(noteBox);
+      noteBox.addEventListener("input", function(){ autoGrowBox(noteBox); });
+      noteBox.addEventListener("blur", function(){
+        state.monthlyNotes[blockKey] = noteBox.value;
+        saveState();
+        if(noteBox.value.trim()) markCheckinToday();
+      });
+      noteWrap.appendChild(noteBlock);
+    })();}
 
     // 折疊區塊展開時，重新計算回答框高度（收合中的 textarea 量不到高度）
     Array.prototype.forEach.call(panelsEl.querySelectorAll("details.sec"), function(det){
