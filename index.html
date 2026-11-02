@@ -710,13 +710,24 @@
     if(!sel) return;
     var weeks = Object.keys(state.weeksData).sort(function(a,b){ return Number(b) - Number(a); });
     sel.innerHTML = "";
+    // 月複習項目（每滿 4 週一個，最新的排最上面）
+    var blocks = getMonthlyBlocks();
+    var validValues = [];
+    for(var bi = blocks.length - 1; bi >= 0; bi--){
+      var opt0 = document.createElement("option");
+      opt0.value = "R" + (bi + 1);
+      opt0.textContent = "複習" + (bi + 1) + "（Week " + blocks[bi][0] + "–" + blocks[bi][3] + "）";
+      sel.appendChild(opt0);
+      validValues.push(opt0.value);
+    }
     weeks.forEach(function(wn){
       var opt = document.createElement("option");
       opt.value = wn;
       opt.textContent = "Week " + wn;
       sel.appendChild(opt);
+      validValues.push(wn);
     });
-    if(state.currentWeek && weeks.indexOf(state.currentWeek) !== -1){
+    if(state.currentWeek && validValues.indexOf(state.currentWeek) !== -1){
       sel.value = state.currentWeek;
     }else if(weeks.length){
       state.currentWeek = weeks[0];
@@ -764,7 +775,8 @@
         });
         return Promise.all(fetches).then(function(){
           // 預設顯示最新週；但這次開啟期間若使用者手動切過週，就尊重他的選擇
-          if(manifest.latest && state.weeksData[String(manifest.latest)] &&
+          var onReviewWeek = String(state.currentWeek || "").charAt(0) === "R";
+          if(manifest.latest && state.weeksData[String(manifest.latest)] && !onReviewWeek &&
              (!userPickedWeek || !state.weeksData[state.currentWeek])){
             state.currentWeek = String(manifest.latest);
           }
@@ -1311,15 +1323,17 @@
   }
 
   // ---------- 月複習（每 4 週一次，主：自己講過的內容，次：四週文本）----------
-  // 回傳最近一個「完整 4 週區塊」的週數陣列（字串），不足 4 週回傳 null
-  function getMonthlyBlock(){
+  // 回傳所有「完整 4 週區塊」：[["1","2","3","4"], ["5","6","7","8"], ...]
+  function getMonthlyBlocks(){
     var weeks = Object.keys(state.weeksData).filter(function(w){
       var wd = state.weeksData[w];
-      return wd && wd.days && wd.days.length > 0;
+      return /^\d+$/.test(w) && wd && wd.days && wd.days.length > 0;
     }).sort(function(a,b){ return Number(a) - Number(b); });
-    if(weeks.length < 4) return null;
-    var blockIdx = Math.floor(weeks.length / 4);
-    return weeks.slice((blockIdx-1)*4, blockIdx*4);
+    var blocks = [];
+    for(var i=0; i+4 <= weeks.length; i+=4){
+      blocks.push(weeks.slice(i, i+4));
+    }
+    return blocks;
   }
 
   // 收集某週 5 天「重點句型 Key Patterns」欄的內容
@@ -1703,8 +1717,141 @@
   }
 
   // ---------- render ----------
+  // 月複習週頁面（週選單選「複習N」時）：Day1-4 重答各週、Day5 綜合，每天一顆複製鍵
+  function renderReviewWeek(reviewN){
+    var blocks = getMonthlyBlocks();
+    var block = blocks[reviewN - 1];
+    if(!block){
+      $("resultsCard").style.display = "none";
+      $("emptyCard").style.display = "block";
+      return;
+    }
+    var blockKey = "M" + block.join("-");
+    var label = "Week " + block[0] + "–" + block[3];
+    $("resultsCard").style.display = "block";
+    $("emptyCard").style.display = "none";
+    $("resultsHeading").textContent = "複習" + reviewN + "（" + label + "）";
+
+    if(typeof activeDay !== "number" || activeDay < 1 || activeDay > 5) activeDay = 1;
+
+    // tabs：Day 1-5
+    var tabsEl = $("dayTabs");
+    tabsEl.innerHTML = "";
+    for(var di = 1; di <= 5; di++){
+      (function(d){
+        var b = document.createElement("button");
+        b.className = "tab-btn" + (d === activeDay ? " active" : "");
+        b.textContent = "Day " + d;
+        b.type = "button";
+        b.addEventListener("click", function(){
+          activeDay = d;
+          renderResults();
+        });
+        tabsEl.appendChild(b);
+      })(di);
+    }
+
+    var panelsEl = $("dayPanels");
+    panelsEl.innerHTML = "";
+    for(var dn = 1; dn <= 5; dn++){
+      (function(dayNum){
+        var panel = document.createElement("div");
+        panel.className = "day-panel" + (dayNum === activeDay ? " active" : "");
+
+        var titleEn, titleCn;
+        if(dayNum <= 4){
+          var w = block[dayNum - 1];
+          var wdw = state.weeksData[w];
+          titleEn = "Re-answer Week " + w + (wdw && wdw.articleEn ? ": " + wdw.articleEn : "");
+          titleCn = "重答 Week " + w + " 你練過的 5 題（挑你當時答得最弱的）＋重用你的重點句型";
+        }else{
+          titleEn = "Synthesis — " + label;
+          titleCn = "綜合回顧：4 篇文章各 1 分鐘重述 + 重點句型造句 + 自由對話";
+        }
+
+        var html = "";
+        html += '<div class="day-meta">Day ' + dayNum + ' of 5 · 複習' + reviewN + ' · ' + escapeHtml(label) + '</div>';
+        html += '<div class="day-title-en">' + escapeHtml(titleEn) + '</div>';
+        html += '<div class="day-title-cn">' + escapeHtml(titleCn) + '</div>';
+        html += '<div class="review-day-body"></div>';
+        panel.innerHTML = html;
+        panelsEl.appendChild(panel);
+
+        var body = panel.querySelector(".review-day-body");
+
+        var cb = document.createElement("button");
+        cb.className = "btn";
+        cb.type = "button";
+        cb.style.marginTop = "10px";
+        cb.textContent = "📋 複製今日複習包";
+        cb.addEventListener("click", function(){
+          var prompt = buildMonthlyReviewPrompt(block, dayNum);
+          if(!prompt){ alert("這一週還沒有可複習的內容。"); return; }
+          function done(){
+            cb.textContent = "已複製！貼到你的 Project →";
+            setTimeout(function(){ cb.textContent = "📋 複製今日複習包"; }, 2500);
+          }
+          if(navigator.clipboard && navigator.clipboard.writeText){
+            navigator.clipboard.writeText(prompt).then(done).catch(function(){
+              window.prompt("自動複製失敗，請手動全選複製：", prompt);
+            });
+          }else{
+            window.prompt("請手動全選複製：", prompt);
+          }
+        });
+        body.appendChild(cb);
+
+        var gptOpen = document.createElement("button");
+        gptOpen.className = "btn ghost small";
+        gptOpen.type = "button";
+        gptOpen.style.marginLeft = "8px";
+        gptOpen.style.marginTop = "10px";
+        gptOpen.textContent = "開啟 ChatGPT ↗";
+        gptOpen.addEventListener("click", openChatGptApp);
+        body.appendChild(gptOpen);
+
+        var hint = document.createElement("div");
+        hint.className = "hint";
+        hint.textContent = dayNum <= 4
+          ? "練法：複製複習包 → 貼到「英文口說教練」Project 開新對話 → 教練先讓你重答（不先看舊答案），再拿你四週前的答案對比，並盯你重用自己記下的重點句型。"
+          : "練法：複製複習包 → 貼到 Project 開新對話 → 四篇文章各用 1 分鐘重述 → 重點句型即席造句 → 自由對話收尾。";
+        body.appendChild(hint);
+
+        // Day 5 附月複習筆記
+        if(dayNum === 5){
+          var noteBlock = document.createElement("div");
+          noteBlock.className = "q-block";
+          noteBlock.style.marginTop = "14px";
+          var nt = document.createElement("div");
+          nt.className = "q-en";
+          nt.textContent = "複習心得 & 下個月想加強的";
+          noteBlock.appendChild(nt);
+          var noteBox = document.createElement("textarea");
+          noteBox.className = "answer-box";
+          noteBox.placeholder = "記下這次月複習的進步、退步、還想補強的句型...";
+          if(!state.monthlyNotes) state.monthlyNotes = {};
+          noteBox.value = state.monthlyNotes[blockKey] || "";
+          noteBlock.appendChild(noteBox);
+          noteBox.addEventListener("input", function(){ autoGrowBox(noteBox); });
+          noteBox.addEventListener("blur", function(){
+            state.monthlyNotes[blockKey] = noteBox.value;
+            saveState();
+            if(noteBox.value.trim()) markCheckinToday();
+          });
+          body.appendChild(noteBlock);
+        }
+      })(dn);
+    }
+
+    growVisibleAnswerBoxes();
+  }
+
   function renderResults(){
     var wn = state.currentWeek;
+    if(wn && String(wn).charAt(0) === "R"){
+      renderReviewWeek(Number(String(wn).slice(1)) || 1);
+      return;
+    }
     var wd = wn ? state.weeksData[wn] : null;
     if(!wd || !wd.days || wd.days.length === 0){
       $("resultsCard").style.display = "none";
@@ -1741,20 +1888,6 @@
       renderResults();
     });
     tabsEl.appendChild(rb);
-
-    // 月複習 tab（累積滿 4 週才出現）
-    var monthlyBlock = getMonthlyBlock();
-    if(monthlyBlock){
-      var mb = document.createElement("button");
-      mb.className = "tab-btn" + (activeDay === "M" ? " active" : "");
-      mb.textContent = "📅 月複習";
-      mb.type = "button";
-      mb.addEventListener("click", function(){
-        activeDay = "M";
-        renderResults();
-      });
-      tabsEl.appendChild(mb);
-    }
 
     // panels
     var panelsEl = $("dayPanels");
@@ -2066,101 +2199,6 @@
         fieldsEl.appendChild(block);
       });
     })();
-
-    // 月複習頁面（每 4 週一次：Day1-4 重答各週 5 題＋重點句型，Day5 綜合）
-    if(monthlyBlock){(function(){
-      var blockKey = "M" + monthlyBlock.join("-");
-      var label = "Week " + monthlyBlock[0] + "–" + monthlyBlock[monthlyBlock.length-1];
-      var panel = document.createElement("div");
-      panel.className = "day-panel" + (activeDay === "M" ? " active" : "");
-      panel.innerHTML =
-        '<div class="day-meta">Monthly Review · ' + escapeHtml(label) + '</div>' +
-        '<div class="day-title-en">Monthly Review 月複習週</div>' +
-        '<div class="day-title-cn">主：重答你實際練過的題目＋重用你的重點句型；次：四週文章回顧。每天一包，連練 5 天。</div>' +
-        '<details class="sec" open><summary><span class="sec-title">每日複習包</span><span class="sec-arrow">▶</span></summary><div class="sec-body">' +
-        '<div class="monthly-btn-list"></div>' +
-        '</div></details>' +
-        '<details class="sec"><summary><span class="sec-title">月複習筆記</span><span class="sec-arrow">▶</span></summary><div class="sec-body">' +
-        '<div class="monthly-note"></div>' +
-        '</div></details>';
-      panelsEl.appendChild(panel);
-
-      var listEl2 = panel.querySelector(".monthly-btn-list");
-      var dayLabels = monthlyBlock.map(function(w, i){
-        var wd3 = state.weeksData[w];
-        return "Day " + (i+1) + " · 重答 Week " + w + (wd3 && wd3.articleEn ? "：" + wd3.articleEn : "");
-      });
-      dayLabels.push("Day 5 · 綜合回顧（4 篇文章重述 + 句型造句 + 自由對話）");
-
-      dayLabels.forEach(function(lbl, i){
-        var dayNum = i + 1;
-        var row2 = document.createElement("div");
-        row2.className = "q-block";
-
-        var t = document.createElement("div");
-        t.className = "q-en";
-        t.textContent = lbl;
-        row2.appendChild(t);
-
-        var cb = document.createElement("button");
-        cb.className = "btn";
-        cb.type = "button";
-        cb.style.marginTop = "6px";
-        cb.textContent = "📋 複製 Day " + dayNum + " 複習包";
-        cb.addEventListener("click", function(){
-          var prompt = buildMonthlyReviewPrompt(monthlyBlock, dayNum);
-          if(!prompt){ alert("這一週還沒有可複習的內容。"); return; }
-          function done(){
-            cb.textContent = "已複製！貼到你的 Project →";
-            setTimeout(function(){ cb.textContent = "📋 複製 Day " + dayNum + " 複習包"; }, 2500);
-          }
-          if(navigator.clipboard && navigator.clipboard.writeText){
-            navigator.clipboard.writeText(prompt).then(done).catch(function(){
-              window.prompt("自動複製失敗，請手動全選複製：", prompt);
-            });
-          }else{
-            window.prompt("請手動全選複製：", prompt);
-          }
-        });
-        row2.appendChild(cb);
-        listEl2.appendChild(row2);
-      });
-
-      var gptOpen2 = document.createElement("button");
-      gptOpen2.className = "btn ghost small";
-      gptOpen2.type = "button";
-      gptOpen2.style.marginTop = "8px";
-      gptOpen2.textContent = "開啟 ChatGPT ↗";
-      gptOpen2.addEventListener("click", openChatGptApp);
-      listEl2.appendChild(gptOpen2);
-
-      var hint2 = document.createElement("div");
-      hint2.className = "hint";
-      hint2.textContent = "練法：每天按一包 → 貼到「英文口說教練」Project 開新對話 → 教練會先讓你重答（不先看舊答案），再拿你四週前的答案對比，並盯你重用自己記下的重點句型。Day 5 做四篇文章的 1 分鐘重述與句型造句。";
-      listEl2.appendChild(hint2);
-
-      // 筆記欄（依 4 週區塊各存一份）
-      var noteWrap = panel.querySelector(".monthly-note");
-      var noteBlock = document.createElement("div");
-      noteBlock.className = "q-block";
-      var nt = document.createElement("div");
-      nt.className = "q-en";
-      nt.textContent = "複習心得 & 下個月想加強的";
-      noteBlock.appendChild(nt);
-      var noteBox = document.createElement("textarea");
-      noteBox.className = "answer-box";
-      noteBox.placeholder = "記下這次月複習的進步、退步、還想補強的句型...";
-      if(!state.monthlyNotes) state.monthlyNotes = {};
-      noteBox.value = state.monthlyNotes[blockKey] || "";
-      noteBlock.appendChild(noteBox);
-      noteBox.addEventListener("input", function(){ autoGrowBox(noteBox); });
-      noteBox.addEventListener("blur", function(){
-        state.monthlyNotes[blockKey] = noteBox.value;
-        saveState();
-        if(noteBox.value.trim()) markCheckinToday();
-      });
-      noteWrap.appendChild(noteBlock);
-    })();}
 
     // 折疊區塊展開時，重新計算回答框高度（收合中的 textarea 量不到高度）
     Array.prototype.forEach.call(panelsEl.querySelectorAll("details.sec"), function(det){
