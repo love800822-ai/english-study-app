@@ -1817,6 +1817,47 @@
           : "練法：複製複習包 → 貼到 Project 開新對話 → 四篇文章各用 1 分鐘重述 → 重點句型即席造句 → 自由對話收尾。";
         body.appendChild(hint);
 
+        // 學習重點欄（每天一格，貼教練 wrap-up 的內容）
+        (function(){
+          var tkKey = blockKey + "-d" + dayNum;
+          var tkBlock = document.createElement("div");
+          tkBlock.className = "q-block";
+          tkBlock.style.marginTop = "14px";
+          var tkTitle = document.createElement("div");
+          tkTitle.className = "q-en";
+          tkTitle.textContent = "學習重點 Session Takeaways";
+          tkBlock.appendChild(tkTitle);
+          var tkCn = document.createElement("div");
+          tkCn.className = "q-cn";
+          tkCn.textContent = dayNum <= 4
+            ? "練完後把教練給的修正版回答、升級句型貼過來"
+            : "貼上教練的 Review highlights（最佳句子、用得好的句型、下月要加強的）";
+          tkBlock.appendChild(tkCn);
+          var tkBox = document.createElement("textarea");
+          tkBox.className = "answer-box";
+          tkBox.placeholder = "貼上今天複習的 polished answers / Key Patterns / 升級句...";
+          if(!state.monthlyNotes) state.monthlyNotes = {};
+          tkBox.value = state.monthlyNotes[tkKey] || "";
+          tkBlock.appendChild(tkBox);
+          tkBox.addEventListener("input", function(){ autoGrowBox(tkBox); });
+          tkBox.addEventListener("blur", function(){
+            state.monthlyNotes[tkKey] = tkBox.value;
+            saveState();
+            if(tkBox.value.trim()) markCheckinToday();
+          });
+          var tkSpk = document.createElement("button");
+          tkSpk.className = "btn ghost small";
+          tkSpk.type = "button";
+          tkSpk.style.marginTop = "6px";
+          tkSpk.textContent = "🔊 朗讀這段";
+          tkSpk.addEventListener("click", function(){
+            if(!tkBox.value.trim()){ alert("這格還沒有內容"); return; }
+            speakText(tkBox.value);
+          });
+          tkBlock.appendChild(tkSpk);
+          body.appendChild(tkBlock);
+        })();
+
         // Day 5 附月複習筆記
         if(dayNum === 5){
           var noteBlock = document.createElement("div");
